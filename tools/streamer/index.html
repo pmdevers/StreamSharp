@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HLS Stream Player</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        #video-container {
+            width: 90%;
+            max-width: 1280px;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        #status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .loading { background: #ff9800; color: #000; }
+        .playing { background: #4caf50; }
+        .error { background: #f44336; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+    <h1>HLS Stream Player</h1>
+    <div id="video-container">
+        <video id="video" controls autoplay></video>
+    </div>
+    <div id="status" class="loading">Loading stream...</div>
+
+    <script>
+        var video = document.getElementById('video');
+        var status = document.getElementById('status');
+        var videoSrc = 'stream.m3u8';
+
+        if (Hls.isSupported()) {
+            var hls = new Hls({
+                debug: false,
+                enableWorker: true,
+                lowLatencyMode: true,
+                backBufferLength: 90
+            });
+            
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);
+            
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                status.textContent = 'Stream ready - Playing...';
+                status.className = 'playing';
+                video.play();
+            });
+            
+            hls.on(Hls.Events.ERROR, function(event, data) {
+                if (data.fatal) {
+                    switch(data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            status.textContent = 'Network error - Retrying...';
+                            status.className = 'error';
+                            hls.startLoad();
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            status.textContent = 'Media error - Recovering...';
+                            status.className = 'error';
+                            hls.recoverMediaError();
+                            break;
+                        default:
+                            status.textContent = 'Fatal error: ' + data.type;
+                            status.className = 'error';
+                            hls.destroy();
+                            break;
+                    }
+                }
+            });
+        } 
+        // Native HLS support (Safari, etc.)
+        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = videoSrc;
+            video.addEventListener('loadedmetadata', function() {
+                status.textContent = 'Stream ready - Playing...';
+                status.className = 'playing';
+                video.play();
+            });
+            video.addEventListener('error', function() {
+                status.textContent = 'Error loading stream';
+                status.className = 'error';
+            });
+        } else {
+            status.textContent = 'HLS is not supported in your browser';
+            status.className = 'error';
+        }
+    </script>
+</body>
+</html>

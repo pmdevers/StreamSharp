@@ -1,0 +1,27 @@
+<!-- See https://aka.ms/dotnet/msbuild/customize for more details on customizing your build -->
+<Project>
+	<PropertyGroup>
+		<CompanyName>Pmdevers</CompanyName>
+
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<GenerateSBOM>true</GenerateSBOM>
+	
+		<Authors>Patrick Evers</Authors>
+		<Owners>$(CompanyName)</Owners>
+
+		<Company>$(CompanyName)</Company>
+		<RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>		
+
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(ProjectName).Tests"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="SonarAnalyzer.CSharp" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.Sbom.Targets" PrivateAssets="all" />
+	</ItemGroup>
+</Project>

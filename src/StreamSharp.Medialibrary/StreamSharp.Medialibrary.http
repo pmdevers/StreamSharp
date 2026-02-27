@@ -1,0 +1,6 @@
+@StreamSharp.Medialibrary_HostAddress = http://localhost:5224
+
+GET {{StreamSharp.Medialibrary_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

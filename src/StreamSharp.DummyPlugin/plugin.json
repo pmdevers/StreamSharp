@@ -1,0 +1,5 @@
+{
+    "name": "StreamSharp.DummyPlugin",
+    "version": "1.0.0",
+    "entryAssembly": "StreamSharp.DummyPlugin.dll"
+}

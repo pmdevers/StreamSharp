@@ -1,0 +1,10 @@
+@StreamSharp.Server_HostAddress = http://localhost:5111
+
+GET {{StreamSharp.Server_HostAddress}}/api/plugins
+Accept: application/json
+
+###
+
+
+DELETE {{StreamSharp.Server_HostAddress}}/api/plugins/dummy
+Accept: applicatopm/json
