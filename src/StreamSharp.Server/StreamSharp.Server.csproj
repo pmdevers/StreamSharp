@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StreamSharp.Plugin\StreamSharp.Plugin.csproj" />
+    <ProjectReference Include="..\StreamSharp.SourceGenerators\StreamSharp.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

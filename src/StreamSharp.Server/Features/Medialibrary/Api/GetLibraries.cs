@@ -1,10 +1,14 @@
-﻿namespace StreamSharp.Server.Features.Medialibrary;
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace StreamSharp.Server.Features.Medialibrary.Api;
 
 public static class Getlibraries
 {
-    public static async Task<IResult> Handle()
+    public static async Task<IResult> Handle(
+        [FromServices] MedialibraryManager manager
+        )
     {
-
-        return TypedResults.Ok(new[] { new { Id = "1", Name = "My Media Library" } });
+        var libraries = await manager.FindLibraries();
+        return TypedResults.Ok(libraries.Select(x => new { x.Id, x.Name }));
     }
 }

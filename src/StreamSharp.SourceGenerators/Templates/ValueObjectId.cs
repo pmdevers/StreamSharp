@@ -6,6 +6,7 @@ namespace {{ namespace }}
 {
 {{~ end ~}}
     [System.Runtime.CompilerServices.CompilerGenerated]
+    [System.Text.Json.Serialization.JsonConverter(typeof({{ type_name }}JsonConverter))]
     public {{ keyword }} {{ type_name }} : System.IEquatable<{{ type_name }}>, System.IComparable<{{ type_name }}>
     {
         public {{ underlying_type }} Value { get; }
@@ -47,6 +48,39 @@ namespace {{ namespace }}
             return false;
         }
 #endif
+    }
+
+    [System.Runtime.CompilerServices.CompilerGenerated]
+    internal sealed class {{ type_name }}JsonConverter : System.Text.Json.Serialization.JsonConverter<{{ type_name }}>
+    {
+        public override {{ type_name }} Read(ref System.Text.Json.Utf8JsonReader reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
+        {
+{{~ if is_guid ~}}
+            if (reader.TokenType == System.Text.Json.JsonTokenType.String)
+            {
+                var guidString = reader.GetString();
+                if (System.Guid.TryParse(guidString, out var guid))
+                {
+                    return new {{ type_name }}(guid);
+                }
+            }
+            throw new System.Text.Json.JsonException($"Unable to convert \"{reader.GetString()}\" to {{ type_name }}");
+{{~ end ~}}
+{{~ if is_not_guid ~}}
+            var value = System.Text.Json.JsonSerializer.Deserialize<{{ underlying_type }}>(ref reader, options);
+            return new {{ type_name }}(value);
+{{~ end ~}}
+        }
+
+        public override void Write(System.Text.Json.Utf8JsonWriter writer, {{ type_name }} value, System.Text.Json.JsonSerializerOptions options)
+        {
+{{~ if is_guid ~}}
+            writer.WriteStringValue(value.Value.ToString());
+{{~ end ~}}
+{{~ if is_not_guid ~}}
+            System.Text.Json.JsonSerializer.Serialize(writer, value.Value, options);
+{{~ end ~}}
+        }
     }
 {{~ if namespace ~}}
 }

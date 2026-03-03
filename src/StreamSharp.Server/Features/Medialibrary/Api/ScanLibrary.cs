@@ -1,4 +1,4 @@
-﻿namespace StreamSharp.Server.Features.Medialibrary;
+﻿namespace StreamSharp.Server.Features.Medialibrary.Api;
 
 public static class ScanLibrary
 {

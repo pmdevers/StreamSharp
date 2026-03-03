@@ -119,13 +119,15 @@ namespace StreamSharp.SourceGenerators
         {
             var template = TemplateHelper.LoadTemplate("ValueObjectId.cs");
 
+            var isGuid = info.UnderlyingType == "System.Guid";
             var parameters = new Dictionary<string, object>
             {
                 { "namespace", info.Namespace ?? string.Empty },
                 { "type_name", $"{info.TypeName}Id" },
                 { "underlying_type", info.UnderlyingType },
                 { "keyword", info.IsStruct ? "struct" : "readonly struct" },
-                { "is_guid", info.UnderlyingType == "System.Guid" }
+                { "is_guid", isGuid },
+                { "is_not_guid", !isGuid }
             };
 
             return TemplateHelper.RenderTemplate(template, parameters);

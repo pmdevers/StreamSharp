@@ -1,14 +1,21 @@
-﻿namespace StreamSharp.Server.Features.Library;
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace StreamSharp.Server.Features.Medialibrary.Api;
 
 public static class CreateLibrary
 {
     public record CreateLibraryRequest(string Name);
 
-    public static async Task<IResult> Handle(CreateLibraryRequest request)
+    public static async Task<IResult> Handle(
+        [FromServices] MedialibraryManager manager,
+        CreateLibraryRequest request)
     {
-        // Here you would typically call a service to create the library and persist it
-        var newLibraryId = Guid.NewGuid(); // Simulate creating a new library ID
-        // Return a Created response with the location of the new library
-        return TypedResults.Created($"/library/{newLibraryId}", new { Id = newLibraryId, Name = request.Name });
+        var library = await manager.CreateAsync(new Library()
+        {
+            Id = LibraryId.New(),
+            Name = request.Name
+        });
+
+        return TypedResults.Created($"/library/{library.Id}", new { library.Id, library.Name });
     }
 }
