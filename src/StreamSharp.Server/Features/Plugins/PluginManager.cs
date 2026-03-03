@@ -7,10 +7,29 @@ namespace StreamSharp.Server.Features.Plugins;
 public class PluginManager(string pluginsPath)
 {
     private readonly string _pluginRoot = pluginsPath;
-    private readonly Dictionary<string, (PluginLoadContext ctx, IPlugin instance)> _loaded = [];
+    private readonly Dictionary<string, PluginEntry> _loaded = [];
+    private bool _needsRestart = false;
 
     public List<string> GetPlugins()
          => [.. _loaded.Keys];
+
+    public bool NeedsRestart => _needsRestart;
+
+    public void ApplyServicesToBuilder(IServiceCollection services)
+    {
+        foreach (var entry in _loaded.Values)
+        {
+            entry.context.ApplyServices(services);
+        }
+    }
+
+    public void ApplyEndpointsToApp(IEndpointRouteBuilder routeBuilder)
+    {
+        foreach (var entry in _loaded.Values)
+        {
+            entry.context.ApplyEndpoints(routeBuilder);
+        }
+    }
 
     public async Task<string> InstallPlugin(Stream zipStream)
     {
@@ -18,6 +37,7 @@ public class PluginManager(string pluginsPath)
         Directory.CreateDirectory(tempDir);
         using var archive = new ZipArchive(zipStream);
         await archive.ExtractToDirectoryAsync(tempDir);
+        _needsRestart = true;
         return tempDir;
     }
 
@@ -25,6 +45,13 @@ public class PluginManager(string pluginsPath)
     {
         foreach (var pluginDir in Directory.GetDirectories(_pluginRoot))
         {
+            string configPath = Path.Combine(pluginDir, "plugin.json");
+            if (!File.Exists(configPath))
+            {
+                Directory.Delete(pluginDir, true);
+                continue;
+            }
+
             LoadPlugin(pluginDir);
         }
     }
@@ -42,8 +69,14 @@ public class PluginManager(string pluginsPath)
         var pluginType = asm.GetTypes().First(t => typeof(IPlugin).IsAssignableFrom(t));
 
         var instance = Activator.CreateInstance(pluginType) as IPlugin;
+        var pluginContext = new PluginContext();
 
-        _loaded[config.Name] = (ctx, instance);
+        var entry = new PluginEntry(ctx, instance, pluginContext, config.Name);
+
+        _loaded[config.Name] = entry;
+
+        instance.Start(pluginContext);
+
         return instance;
     }
 
@@ -53,16 +86,16 @@ public class PluginManager(string pluginsPath)
             return;
 
         // Store the plugin path before clearing references
-        string pluginPath = entry.ctx.PluginPath;
+        string pluginPath = entry.loadContext.PluginPath;
 
         // Stop the plugin
         entry.instance.Stop();
 
         // Create a weak reference to track when the context is actually collected
-        var weakRef = new WeakReference(entry.ctx);
+        var weakRef = new WeakReference(entry.loadContext);
 
         // Initiate unload
-        entry.ctx.Unload();
+        entry.loadContext.Unload();
 
         // Remove from dictionary to clear strong reference
         _loaded.Remove(name);
@@ -77,8 +110,25 @@ public class PluginManager(string pluginsPath)
             GC.WaitForPendingFinalizers();
         }
 
-        // Delete the directory now that the assembly is unloaded
-        Directory.Delete(pluginPath, recursive: true);
+        try
+        {
+            // Delete the directory now that the assembly is unloaded
+            Directory.Delete(pluginPath, recursive: true);
+        }
+        catch
+        {
+
+            // DLL Is still locked, likely due to a lingering reference. In a production system, consider logging this and retrying later.
+        }
+
+
+        // Mark that a restart is needed to remove services/endpoints
+        _needsRestart = true;
+    }
+
+    public void ClearRestartFlag()
+    {
+        _needsRestart = false;
     }
 
 }
@@ -91,4 +141,10 @@ public class PluginConfig
     public string EntryAssembly { get; set; }
 }
 
+internal record PluginEntry(
+    PluginLoadContext loadContext,
+    IPlugin instance,
+    PluginContext context,
+    string name
+);
 

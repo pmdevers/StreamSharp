@@ -7,9 +7,20 @@ public class DummyPlugin : IPlugin
 {
     public string Name => "dummy";
     public string Description => "A simple dummy plugin to test assembly loading";
-    public void Start()
-    {
 
+    public void Start(IPluginContext context)
+    {
+        context.RegisterServices(services =>
+        {
+            services.AddSingleton<TestService>();
+        });
+
+        context.RegisterApi(endpoints =>
+        {
+            endpoints.MapGet("/dummy/test", DummyEndpoint.ResultAsync)
+                .WithName("DummyTest")
+                .WithTags("Dummy Plugin");
+        });
     }
 
     public void Stop()

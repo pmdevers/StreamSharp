@@ -36,12 +36,14 @@ public sealed class ServerHost(
 ) : IAsyncDisposable
 {
     private readonly CancellationTokenSource _serverToken = new();
+    private readonly PluginManager _pluginManager = new(options.PluginsRoot);
 
     private CancellationTokenSource? _cts;
 
     private Task? _runningTask;
 
     public StreamSharpOptions Options => options;
+    public PluginManager PluginManager => _pluginManager;
 
     public static ServerHostBuilder CreateBuilder()
         => new();
@@ -87,17 +89,20 @@ public sealed class ServerHost(
 
     private async Task RunServerLoopAsync()
     {
+        // Load plugins once, outside the restart loop
+        if (options.LoadPlugins && !_pluginManager.GetPlugins().Any())
+        {
+            _pluginManager.LoadAll();
+        }
+
         do
         {
             _cts = CancellationTokenSource.CreateLinkedTokenSource(_serverToken.Token);
             WebApplication? app = null;
             try
             {
-
-                var plugins = new PluginManager(options.PluginsRoot);
-
-                if (options.LoadPlugins)
-                    plugins.LoadAll();
+                // Clear restart flag at the beginning of each server start
+                _pluginManager.ClearRestartFlag();
 
                 var builder = WebApplication.CreateBuilder();
                 builder.Services.AddOpenApi(options =>
@@ -113,12 +118,22 @@ public sealed class ServerHost(
                     });
                 });
                 builder.Services.AddSingleton(options);
-                builder.Services.AddSingleton(plugins);
+                builder.Services.AddSingleton(_pluginManager);
                 builder.Services.AddSingleton(this);
+
+                // Apply plugin services
+                _pluginManager.ApplyServicesToBuilder(builder.Services);
+
                 configure?.Invoke(builder);
                 app = builder.Build();
+
+
                 app.MapOpenApi();
                 app.MapScalarApiReference();
+
+                // Apply plugin endpoints
+                _pluginManager.ApplyEndpointsToApp(app);
+
                 use?.Invoke(app);
                 await app.RunAsync(_cts.Token);
             }

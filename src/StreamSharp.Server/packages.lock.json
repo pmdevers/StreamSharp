@@ -36,6 +36,9 @@
       },
       "streamsharp.plugin": {
         "type": "Project"
+      },
+      "streamsharp.sourcegenerators": {
+        "type": "Project"
       }
     }
   }
