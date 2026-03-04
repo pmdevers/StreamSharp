@@ -1,6 +1,5 @@
 using StreamSharp.Server;
 using StreamSharp.Server.Features;
-using StreamSharp.Server.Features.Medialibrary;
 using StreamSharp.Server.Features.Setup;
 
 if (false)
@@ -25,10 +24,6 @@ var host = ServerHost.CreateBuilder()
     .WithOptions(x =>
     {
         x.PluginsRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins");
-    })
-    .Configure((builder) =>
-    {
-        builder.Services.AddMedialibraryApi();
     })
     .Use((app) =>
     {

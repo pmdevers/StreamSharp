@@ -6,9 +6,11 @@ public static class HealthCheckEndpoints
     {
         public void HealthChecks()
         {
-            app.MapGet("/healthz", () => Results.Ok("Healthy")).WithTags("Media Library"); ;
-            app.MapGet("/readyz", () => Results.Ok("Ready")).WithTags("Media Library");
-            app.MapGet("/livez", () => Results.Ok("Alive")).WithTags("Media Library");
+            var group = app.MapGroup("/healthz").WithTags("Health Checks");
+
+            group.MapGet("/", () => Results.Ok("Healthy"));
+            group.MapGet("/readyz", () => Results.Ok("Ready"));
+            group.MapGet("/livez", () => Results.Ok("Alive"));
         }
     }
 }

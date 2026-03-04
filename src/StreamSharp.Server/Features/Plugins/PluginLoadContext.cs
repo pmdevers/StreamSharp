@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using StreamSharp.Plugin;
+using System.Reflection;
 using System.Runtime.Loader;
 
 namespace StreamSharp.Server.Features.Plugins;
@@ -10,12 +11,12 @@ public class PluginLoadContext(string pluginPath)
 
     protected override Assembly Load(AssemblyName assemblyName)
     {
-        if (assemblyName.Name == "StreamSharp.Plugin")
+        if (assemblyName.Name == typeof(IPlugin).Assembly.GetName().Name)
         {
             return null;
         }
 
-        var assemblyPath = Path.Combine(Path.GetDirectoryName(pluginPath)!, $"{assemblyName.Name}.dll");
+        var assemblyPath = Path.Combine(pluginPath, $"{assemblyName.Name}.dll");
         return File.Exists(assemblyPath)
             ? LoadFromAssemblyPath(assemblyPath)
             : null!;

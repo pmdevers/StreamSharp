@@ -4,11 +4,19 @@ using System.Text.Json;
 
 namespace StreamSharp.Server.Features.Plugins;
 
-public class PluginManager(string pluginsPath)
+public class PluginManager
 {
-    private readonly string _pluginRoot = pluginsPath;
+    private readonly string _pluginRoot;
     private readonly Dictionary<string, PluginEntry> _loaded = [];
     private bool _needsRestart = false;
+
+    public PluginManager(string pluginsPath)
+    {
+        if (!Directory.Exists(pluginsPath))
+            Directory.CreateDirectory(pluginsPath);
+
+        _pluginRoot = pluginsPath;
+    }
 
     public List<string> GetPlugins()
          => [.. _loaded.Keys];
@@ -69,7 +77,7 @@ public class PluginManager(string pluginsPath)
         var pluginType = asm.GetTypes().First(t => typeof(IPlugin).IsAssignableFrom(t));
 
         var instance = Activator.CreateInstance(pluginType) as IPlugin;
-        var pluginContext = new PluginContext();
+        var pluginContext = new PluginContext(instance);
 
         var entry = new PluginEntry(ctx, instance, pluginContext, config.Name);
 

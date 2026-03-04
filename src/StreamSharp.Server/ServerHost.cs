@@ -4,31 +4,6 @@ using StreamSharp.Server.Features.Plugins;
 
 namespace StreamSharp.Server;
 
-public class ServerHostBuilder()
-{
-    private readonly StreamSharpOptions _options = [];
-
-    private Action<WebApplicationBuilder>? _configure;
-    private Action<WebApplication>? _use;
-
-    public ServerHostBuilder WithOptions(Action<StreamSharpOptions> options)
-    {
-        options(_options);
-        return this;
-    }
-    public ServerHostBuilder Configure(Action<WebApplicationBuilder> configure)
-    {
-        _configure = configure;
-        return this;
-    }
-    public ServerHostBuilder Use(Action<WebApplication> use)
-    {
-        _use = use;
-        return this;
-    }
-    public ServerHost Build() => new(_options, _configure, _use);
-}
-
 public sealed class ServerHost(
     StreamSharpOptions options,
     Action<WebApplicationBuilder>? configure = null,
@@ -117,6 +92,7 @@ public sealed class ServerHost(
                         return Task.CompletedTask;
                     });
                 });
+
                 builder.Services.AddSingleton(options);
                 builder.Services.AddSingleton(_pluginManager);
                 builder.Services.AddSingleton(this);
@@ -127,9 +103,10 @@ public sealed class ServerHost(
                 configure?.Invoke(builder);
                 app = builder.Build();
 
-
                 app.MapOpenApi();
+#if DEBUG
                 app.MapScalarApiReference();
+#endif
 
                 // Apply plugin endpoints
                 _pluginManager.ApplyEndpointsToApp(app);

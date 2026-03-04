@@ -19,11 +19,15 @@
         "resolved": "2.0.0",
         "contentHash": "GGYLfzV/G/ct80OZ45JxnWP7NvMX1BCugn/lX7TH5o0lcVaviavsLMTxmFV2AybXWjbi3h6FF1vgZiTK6PXndw=="
       },
+      "streamsharp.plugin": {
+        "type": "Project"
+      },
       "streamsharp.server": {
         "type": "Project",
         "dependencies": {
           "Microsoft.AspNetCore.OpenApi": "[10.0.3, )",
-          "Scalar.AspNetCore": "[2.12.50, )"
+          "Scalar.AspNetCore": "[2.13.0, )",
+          "StreamSharp.Plugin": "[1.0.0, )"
         }
       },
       "Microsoft.AspNetCore.OpenApi": {
@@ -37,9 +41,9 @@
       },
       "Scalar.AspNetCore": {
         "type": "CentralTransitive",
-        "requested": "[2.12.50, )",
-        "resolved": "2.12.50",
-        "contentHash": "VjP0hDqICp70OuDtasziehQfs3t2TuhlXfWoOgc5H06iiYLAajclEjfrNDqqD2CTxBPMoU243BXmEphCRF/QTQ=="
+        "requested": "[2.13.0, )",
+        "resolved": "2.13.0",
+        "contentHash": "gKDGlsqFVFuMjuczEldykVFJifPJmQP/o4k49g4g/LOkFOIt8YaIp7om762Wol3uzTmBlgkp2cGMhCPhU64iEQ=="
       }
     }
   }
