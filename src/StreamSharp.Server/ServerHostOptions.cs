@@ -2,7 +2,7 @@
 
 namespace StreamSharp.Server;
 
-public static class TestServerHostOptions
+public static class ServerHostOptions
 {
     extension(StreamSharpOptions options)
     {
