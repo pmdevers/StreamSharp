@@ -117,7 +117,10 @@ public sealed class ServerHost(
                         return Task.CompletedTask;
                     });
                 });
+
                 builder.Services.AddSingleton(options);
+                builder.Services.AddSingleton<MessageQueue>();
+                builder.Services.AddSingleton<IEventBus, EventBus>();
                 builder.Services.AddSingleton(_pluginManager);
                 builder.Services.AddSingleton(this);
 
