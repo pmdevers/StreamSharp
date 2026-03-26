@@ -43,6 +43,9 @@ public class PluginManager(string pluginsPath)
 
     public void LoadAll()
     {
+        if (!Directory.Exists(_pluginRoot))
+            Directory.CreateDirectory(_pluginRoot);
+
         foreach (var pluginDir in Directory.GetDirectories(_pluginRoot))
         {
             string configPath = Path.Combine(pluginDir, "plugin.json");

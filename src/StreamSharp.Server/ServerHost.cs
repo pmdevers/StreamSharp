@@ -119,8 +119,7 @@ public sealed class ServerHost(
                 });
 
                 builder.Services.AddSingleton(options);
-                builder.Services.AddSingleton<MessageQueue>();
-                builder.Services.AddSingleton<IEventBus, EventBus>();
+                builder.Services.AddEventBus();
                 builder.Services.AddSingleton(_pluginManager);
                 builder.Services.AddSingleton(this);
 

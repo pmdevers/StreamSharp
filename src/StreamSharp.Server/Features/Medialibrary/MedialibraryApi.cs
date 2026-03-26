@@ -1,4 +1,5 @@
 ﻿using StreamSharp.Server.Features.Medialibrary.Api;
+using StreamSharp.Server.Features.Medialibrary.Handlers;
 
 namespace StreamSharp.Server.Features.Medialibrary;
 
@@ -9,6 +10,8 @@ public static class MedialibraryApi
         public void AddMedialibraryApi()
         {
             services.AddSingleton<MedialibraryManager>();
+            services.AddMessageHandler<LibraryCreatedHandler>();
+            services.AddMessageHandler<LibraryCreatedHandler2>();
         }
     }
 
