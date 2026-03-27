@@ -1,6 +1,7 @@
 using Scalar.AspNetCore;
 using StreamSharp.Server.Configuration;
 using StreamSharp.Server.Features.Plugins;
+using StreamSharp.Server.Features.Server;
 
 namespace StreamSharp.Server;
 
@@ -122,6 +123,7 @@ public sealed class ServerHost(
                 builder.Services.AddEventBus();
                 builder.Services.AddSingleton(_pluginManager);
                 builder.Services.AddSingleton(this);
+                builder.Services.AddTransient<IMessageHandler<ServerStartedMessage>, TestHandler>();
 
                 // Apply plugin services
                 _pluginManager.ApplyServicesToBuilder(builder.Services);
