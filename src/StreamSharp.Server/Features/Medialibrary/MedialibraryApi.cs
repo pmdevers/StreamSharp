@@ -9,7 +9,6 @@ public static class MedialibraryApi
     {
         public void AddMedialibraryApi()
         {
-            services.AddSingleton<MedialibraryManager>();
             services.AddMessageHandler<LibraryCreatedHandler>();
             services.AddMessageHandler<LibraryCreatedHandler2>();
         }

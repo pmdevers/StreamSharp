@@ -106,6 +106,7 @@ public sealed class ServerHost(
                 _pluginManager.ClearRestartFlag();
 
                 var builder = WebApplication.CreateBuilder();
+
                 builder.Services.AddOpenApi(options =>
                 {
                     options.AddDocumentTransformer((document, _, _) =>

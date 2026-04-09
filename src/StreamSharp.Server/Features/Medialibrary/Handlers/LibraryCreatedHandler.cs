@@ -1,4 +1,6 @@
-﻿namespace StreamSharp.Server.Features.Medialibrary.Handlers;
+﻿using StreamSharp.Server.Features.Medialibrary.Events;
+
+namespace StreamSharp.Server.Features.Medialibrary.Handlers;
 
 public class LibraryCreatedHandler(IEventBus eventBus) : IMessageHandler<LibraryCreated>
 {

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StreamSharp.Server.Features.Medialibrary.Events;
+using StreamSharp.Server.Modeling;
 
 namespace StreamSharp.Server.Features.Medialibrary.Api;
 
@@ -7,15 +9,15 @@ public static class CreateLibrary
     public record CreateLibraryRequest(string Name);
 
     public static async Task<IResult> Handle(
-        [FromServices] MedialibraryManager manager,
+        [FromServices] IEventStreamProvider<LibraryId> manager,
         CreateLibraryRequest request)
     {
-        var library = await manager.CreateAsync(new Library()
-        {
-            Id = LibraryId.New(),
-            Name = request.Name
-        });
+        var stream = await manager.GetOrCreateStream(LibraryId.New());
 
-        return TypedResults.Created($"/library/{library.Id}", new { library.Id, library.Name });
+        stream.Append(new LibraryCreated(request.Name));
+
+        await manager.SaveStream(stream);
+
+        return TypedResults.Created($"/library/{stream.Id}", new { stream.Id, request.Name });
     }
 }
