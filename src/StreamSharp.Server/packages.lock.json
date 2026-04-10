@@ -25,9 +25,9 @@
       },
       "SonarAnalyzer.CSharp": {
         "type": "Direct",
-        "requested": "[10.20.0.135146, )",
-        "resolved": "10.20.0.135146",
-        "contentHash": "Dx+sh/lhhJrG4Sr5W+bCDr/JKhY1Op6UaIoG5UrDVIyryC7rZtqO4Q4adzvm3IqAhFGHY7oYuaSjtR46hIv8qQ=="
+        "requested": "[10.23.0.137933, )",
+        "resolved": "10.23.0.137933",
+        "contentHash": "K8CwUkB4PlUcMfLqGCj1aviVfW9AufZH2K/TjgPGYdj4gosV/kcyxpBR0jaCG8argC6dfxJBbSS6xXJ59lFWgA=="
       },
       "Microsoft.OpenApi": {
         "type": "Transitive",
@@ -35,9 +35,6 @@
         "contentHash": "GGYLfzV/G/ct80OZ45JxnWP7NvMX1BCugn/lX7TH5o0lcVaviavsLMTxmFV2AybXWjbi3h6FF1vgZiTK6PXndw=="
       },
       "streamsharp.plugin": {
-        "type": "Project"
-      },
-      "streamsharp.sourcegenerators": {
         "type": "Project"
       }
     }
