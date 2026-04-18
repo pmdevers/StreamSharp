@@ -34,11 +34,26 @@
         "resolved": "2.0.0",
         "contentHash": "GGYLfzV/G/ct80OZ45JxnWP7NvMX1BCugn/lX7TH5o0lcVaviavsLMTxmFV2AybXWjbi3h6FF1vgZiTK6PXndw=="
       },
-      "streamsharp.plugin": {
+      "streamsharp.core": {
         "type": "Project"
       },
-      "streamsharp.sourcegenerators": {
-        "type": "Project"
+      "streamsharp.plugin": {
+        "type": "Project",
+        "dependencies": {
+          "StreamSharp.Core": "[1.0.0, )"
+        }
+      },
+      "streamsharp.ui": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.FileProviders.Embedded": "[10.0.5, )"
+        }
+      },
+      "Microsoft.Extensions.FileProviders.Embedded": {
+        "type": "CentralTransitive",
+        "requested": "[10.0.5, )",
+        "resolved": "10.0.5",
+        "contentHash": "DQzkbLFNfwmjxErAnWyZTTyBd4cMo6vmGteM4Ayedhk5Pccm2VuKoeKcOZjJG1T+dYK6lMCNk2L7Ftl7dLhgqg=="
       }
     }
   }

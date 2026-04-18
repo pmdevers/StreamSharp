@@ -16,26 +16,6 @@ public static class ServerApi
             group.MapGet("/shutdown", async ([FromServices] ServerHost server) => await server.ServerStopAsync())
                 .WithName("ShutdownServer")
                 .WithDescription("Shuts down the server.");
-
-
-            var bus = app.Services.GetRequiredService<IEventBus>();
-            await bus.PublishAsync(new ServerStartedMessage());
         }
-    }
-}
-
-public record ServerStartedMessage() : Message
-{
-    public long Timestamp { get; init; } = TimeProvider.System.GetTimestamp();
-}
-
-
-
-public class TestHandler : IMessageHandler<ServerStartedMessage>
-{
-    public Task HandleAsync(ServerStartedMessage message, CancellationToken ct = default)
-    {
-        Console.WriteLine($"Server started at {message.Timestamp}");
-        return Task.CompletedTask;
     }
 }

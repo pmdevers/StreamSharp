@@ -1,12 +1,9 @@
+﻿using StreamSharp.Core.Abstractions;
+using StreamSharp.Server.Features.Medialibrary;
+using System.Collections.Concurrent;
 using System.Threading.Channels;
 
 namespace StreamSharp.Server;
-
-public abstract record Message
-{
-    public Guid MessageId { get; init; } = Guid.NewGuid();
-}
-
 
 public static class EventBusExtensions
 {
@@ -26,36 +23,30 @@ public static class EventBusExtensions
             where T : class
         {
             var type = typeof(T).GetInterfaces()
-                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IMessageHandler<>))
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(DomainEventHandler<>))
                 .Select(i => i.GetGenericArguments()[0])
                 .FirstOrDefault()
 
-                ?? throw new InvalidOperationException("T must be a class that implements IMessageHandler<TMessage> where TMessage : Message");
+                ?? throw new InvalidOperationException("T must be a delegate DomainEventHandler<TMessage>");
 
-            var handlerType = typeof(IMessageHandler<>).MakeGenericType(type);
+            var handlerType = typeof(DomainEventHandler<>).MakeGenericType(type);
             services.AddTransient(handlerType, typeof(T));
             return services;
         }
     }
 }
 
-public interface IEventBus
-{
-    ValueTask PublishAsync<T>(T message, CancellationToken ct = default)
-        where T : Message;
-}
-
 public class MessageQueue
 {
-    private readonly Channel<Message> _channel = Channel.CreateUnbounded<Message>();
-    public ChannelReader<Message> Reader => _channel.Reader;
-    public ChannelWriter<Message> Writer => _channel.Writer;
+    private readonly Channel<DomainEvent> _channel = Channel.CreateUnbounded<DomainEvent>();
+    public ChannelReader<DomainEvent> Reader => _channel.Reader;
+    public ChannelWriter<DomainEvent> Writer => _channel.Writer;
 }
 
 public class EventBus(MessageQueue queue) : IEventBus
 {
     public ValueTask PublishAsync<T>(T message, CancellationToken ct = default)
-        where T : Message
+        where T : DomainEvent
     {
         return queue.Writer.WriteAsync(message, ct);
     }
@@ -71,8 +62,9 @@ public class EventBusBackgroundService(MessageQueue queue, IServiceScopeFactory 
             {
 
                 using var scope = scopeFactory.CreateScope();
-                var handlerType = typeof(IMessageHandler<>).MakeGenericType(message.GetType());
+                var handlerType = typeof(DomainEventHandler<>).MakeGenericType(message.GetType());
                 var handler = scope.ServiceProvider.GetServices(handlerType);
+
                 foreach (var h in handler)
                 {
                     var method = handlerType.GetMethod("HandleAsync");
@@ -91,7 +83,27 @@ public class EventBusBackgroundService(MessageQueue queue, IServiceScopeFactory 
     }
 }
 
-public interface IMessageHandler<in T> where T : Message
+
+public class EventStreamStore<TId> : IEventStore<TId>
+    where TId : struct
 {
-    Task HandleAsync(T message, CancellationToken ct = default);
+    private readonly ConcurrentDictionary<TId, List<StreamEvent>> _store = new();
+
+    public Task<EventStream<TId>> LoadAsync(TId id, CancellationToken cancellationToken = default)
+    {
+        var events = _store.GetOrAdd(id, []);
+
+        return Task.FromResult(EventStream<TId>.Create(id, [.. events]));
+    }
+
+    public Task<EventStream<TId>> SaveAsync(EventStream<TId> streamEvents, CancellationToken cancellationToken = default)
+    {
+        var events = _store.AddOrUpdate(streamEvents.Id, [.. streamEvents], (_, existing) =>
+        {
+            existing.AddRange(streamEvents.GetUncommittedEvents());
+            return existing;
+        });
+
+        return Task.FromResult(EventStream<TId>.Create(streamEvents.Id, [.. events]));
+    }
 }

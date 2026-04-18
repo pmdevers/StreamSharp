@@ -39,5 +39,6 @@ public static class DummyEndpoint
 
 public class TestService
 {
-    public string GetTest() => "test";
+    private readonly string _test = "test";
+    public string GetTest() => _test;
 }

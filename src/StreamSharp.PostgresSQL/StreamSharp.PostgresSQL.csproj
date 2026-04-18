@@ -10,4 +10,8 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\StreamSharp.Server\StreamSharp.Server.csproj" />
+  </ItemGroup>
+
 </Project>

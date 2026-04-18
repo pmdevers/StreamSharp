@@ -1,7 +1,8 @@
 using Scalar.AspNetCore;
 using StreamSharp.Server.Configuration;
+using StreamSharp.Server.Features.Medialibrary;
 using StreamSharp.Server.Features.Plugins;
-using StreamSharp.Server.Features.Server;
+using StreamSharp.UI;
 
 namespace StreamSharp.Server;
 
@@ -122,24 +123,42 @@ public sealed class ServerHost(
 
                 builder.Services.AddSingleton(options);
                 builder.Services.AddEventBus();
+                builder.Services.AddTransient(typeof(IEventStore<>), typeof(EventStreamStore<>));
                 builder.Services.AddSingleton(_pluginManager);
                 builder.Services.AddSingleton(this);
-                builder.Services.AddTransient<IMessageHandler<ServerStartedMessage>, TestHandler>();
 
                 // Apply plugin services
                 _pluginManager.ApplyServicesToBuilder(builder.Services);
 
                 configure?.Invoke(builder);
+
+                var spaProvider = WebApp.CreateFileProvider();
+
                 app = builder.Build();
 
 
                 app.MapOpenApi();
                 app.MapScalarApiReference();
 
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = spaProvider,
+                    RequestPath = ""
+                });
+
                 // Apply plugin endpoints
                 _pluginManager.ApplyEndpointsToApp(app);
 
                 use?.Invoke(app);
+
+
+                app.MapFallback(async context =>
+                {
+                    var file = spaProvider.GetFileInfo("index.html");
+                    context.Response.ContentType = "text/html";
+                    await context.Response.SendFileAsync(file);
+                });
+
                 await app.RunAsync(_cts.Token);
             }
             catch (Exception ex) when (options.EnableRestartOnFailure && !_cts.IsCancellationRequested)
