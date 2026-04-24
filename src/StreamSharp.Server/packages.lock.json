@@ -19,9 +19,9 @@
       },
       "Scalar.AspNetCore": {
         "type": "Direct",
-        "requested": "[2.12.50, )",
-        "resolved": "2.12.50",
-        "contentHash": "VjP0hDqICp70OuDtasziehQfs3t2TuhlXfWoOgc5H06iiYLAajclEjfrNDqqD2CTxBPMoU243BXmEphCRF/QTQ=="
+        "requested": "[2.14.4, )",
+        "resolved": "2.14.4",
+        "contentHash": "PyuqLRi7JXyTJm/rh+IWCA4Fct1SlZuWrdYiui5hiaBuSY88+roc4eWKfYaE6zrupBIwnEP8pJLe4ifvU7HtZA=="
       },
       "SonarAnalyzer.CSharp": {
         "type": "Direct",
@@ -35,9 +35,6 @@
         "contentHash": "GGYLfzV/G/ct80OZ45JxnWP7NvMX1BCugn/lX7TH5o0lcVaviavsLMTxmFV2AybXWjbi3h6FF1vgZiTK6PXndw=="
       },
       "streamsharp.plugin": {
-        "type": "Project"
-      },
-      "streamsharp.sourcegenerators": {
         "type": "Project"
       }
     }
