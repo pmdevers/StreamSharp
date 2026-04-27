@@ -1,9 +1,11 @@
 ﻿using StreamSharp.Core.Abstractions;
-using StreamSharp.Server.Features.Medialibrary;
 using System.Collections.Concurrent;
 using System.Threading.Channels;
 
 namespace StreamSharp.Server;
+
+public delegate Task DomainEventHandler<in T>(T message, CancellationToken cancellationToken) 
+    where T : DomainEvent;
 
 public static class EventBusExtensions
 {
@@ -19,18 +21,50 @@ public static class EventBusExtensions
             return services;
         }
 
-        public IServiceCollection AddMessageHandler<T>()
-            where T : class
+        public IServiceCollection AddMessageHandler<T>(DomainEventHandler<T> handler)
+            where T : DomainEvent
         {
-            var type = typeof(T).GetInterfaces()
-                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(DomainEventHandler<>))
-                .Select(i => i.GetGenericArguments()[0])
-                .FirstOrDefault()
+            services.AddSingleton(handler);
+            return services;
+        }
 
-                ?? throw new InvalidOperationException("T must be a delegate DomainEventHandler<TMessage>");
+        public IServiceCollection AddMessageHandler<THandler>()
+            where THandler : class
+        {
+            var handlerType = typeof(THandler);
 
-            var handlerType = typeof(DomainEventHandler<>).MakeGenericType(type);
-            services.AddTransient(handlerType, typeof(T));
+            var methods = handlerType
+                .GetMethods()
+                .Where(m =>
+                {
+                    if (m.ReturnType != typeof(Task))
+                        return false;
+                    var parameters = m.GetParameters();
+                    return parameters.Length == 2
+                        && typeof(DomainEvent).IsAssignableFrom(parameters[0].ParameterType)
+                        && parameters[1].ParameterType == typeof(CancellationToken);
+                })
+                .ToArray();
+
+            if (methods.Length == 0)
+                throw new InvalidOperationException(
+                    $"{handlerType.Name} has no methods matching the DomainEventHandler delegate signature " +
+                    $"'Task MethodName(T message, CancellationToken ct) where T : DomainEvent'.");
+
+            services.AddTransient<THandler>();
+
+            foreach (var method in methods)
+            {
+                var eventType = method.GetParameters()[0].ParameterType;
+                var delegateType = typeof(DomainEventHandler<>).MakeGenericType(eventType);
+
+                services.AddTransient(delegateType, sp =>
+                {
+                    var instance = sp.GetRequiredService<THandler>();
+                    return Delegate.CreateDelegate(delegateType, instance, method);
+                });
+            }
+
             return services;
         }
     }
@@ -63,14 +97,13 @@ public class EventBusBackgroundService(MessageQueue queue, IServiceScopeFactory 
 
                 using var scope = scopeFactory.CreateScope();
                 var handlerType = typeof(DomainEventHandler<>).MakeGenericType(message.GetType());
-                var handler = scope.ServiceProvider.GetServices(handlerType);
+                var handlers = scope.ServiceProvider.GetServices(handlerType);
 
-                foreach (var h in handler)
+                foreach (var h in handlers)
                 {
-                    var method = handlerType.GetMethod("HandleAsync");
-                    if (method != null)
+                    if (h is Delegate del)
                     {
-                        var task = (Task)method.Invoke(h, [message, stoppingToken])!;
+                        var task = (Task)del.DynamicInvoke(message, stoppingToken)!;
                         await task;
                     }
                 }
@@ -84,26 +117,35 @@ public class EventBusBackgroundService(MessageQueue queue, IServiceScopeFactory 
 }
 
 
-public class EventStreamStore<TId> : IEventStore<TId>
+public class EventStreamStore<TId>(IEventBus eventBus) : IEventStore<TId>
     where TId : struct
 {
-    private readonly ConcurrentDictionary<TId, List<StreamEvent>> _store = new();
+    private readonly ConcurrentDictionary<TId, List<DomainEvent>> _store = new();
 
     public Task<EventStream<TId>> LoadAsync(TId id, CancellationToken cancellationToken = default)
     {
-        var events = _store.GetOrAdd(id, []);
-
-        return Task.FromResult(EventStream<TId>.Create(id, [.. events]));
+        if(_store.TryGetValue(id, out var events))
+        {
+            return Task.FromResult(EventStream<TId>.Create(id, [.. events]));
+        }
+        
+        return Task.FromResult(EventStream<TId>.Create(id));
     }
 
-    public Task<EventStream<TId>> SaveAsync(EventStream<TId> streamEvents, CancellationToken cancellationToken = default)
+    public async Task<EventStream<TId>> SaveAsync(EventStream<TId> streamEvents, CancellationToken cancellationToken = default)
     {
+        var uncommitted = streamEvents.GetUncommittedEvents();
         var events = _store.AddOrUpdate(streamEvents.Id, [.. streamEvents], (_, existing) =>
         {
-            existing.AddRange(streamEvents.GetUncommittedEvents());
+            existing.AddRange(uncommitted);
             return existing;
         });
 
-        return Task.FromResult(EventStream<TId>.Create(streamEvents.Id, [.. events]));
+        foreach (var e in uncommitted)
+        {
+            await eventBus.PublishAsync(e, cancellationToken);
+        }
+
+        return EventStream<TId>.Create(streamEvents.Id, [.. events]);
     }
 }

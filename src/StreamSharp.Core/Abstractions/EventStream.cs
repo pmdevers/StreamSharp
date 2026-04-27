@@ -5,11 +5,11 @@
 /// </summary>
 /// <typeparam name="TId">The Type of the aggregateId</typeparam>
 [GenerateId]
-public sealed class EventStream<TId> : IReadOnlyCollection<StreamEvent>
+public sealed class EventStream<TId> : IReadOnlyCollection<DomainEvent>
     where TId : struct
 {
-    private StreamEvent[] _events = [];
-    private readonly List<StreamEvent> _uncomitted = [];
+    private DomainEvent[] _events = [];
+    private readonly List<DomainEvent> _uncomitted = [];
     private readonly TimeProvider _timeProvider;
 
     /// <summary>
@@ -32,16 +32,16 @@ public sealed class EventStream<TId> : IReadOnlyCollection<StreamEvent>
     /// </summary>
     public DateTimeOffset? CreatedOn
         => _events.Length != 0
-        ? _events.FirstOrDefault()?.OccouredOn
-        : _uncomitted.FirstOrDefault()?.OccouredOn;
+        ? _events.FirstOrDefault()?.OccurredOn
+        : _uncomitted.FirstOrDefault()?.OccurredOn;
 
     /// <summary>
     /// The date of the last modification.
     /// </summary>
     public DateTimeOffset? LastModifiedOn
         => _uncomitted.Count != 0
-        ? _uncomitted.LastOrDefault()?.OccouredOn
-        : _events.LastOrDefault()?.OccouredOn;
+        ? _uncomitted.LastOrDefault()?.OccurredOn
+        : _events.LastOrDefault()?.OccurredOn;
 
     /// <summary>
     /// The total number event comitted.
@@ -55,7 +55,7 @@ public sealed class EventStream<TId> : IReadOnlyCollection<StreamEvent>
     /// <param name="id">The id of the aggregate</param>
     /// <param name="events">Array of events</param>
     /// <returns>Returns an event collection </returns>
-    public static EventStream<TId> Create(TId id, StreamEvent[]? events = null, TimeProvider? timeProvider = null)
+    public static EventStream<TId> Create(TId id, DomainEvent[]? events = null, TimeProvider? timeProvider = null)
         => new(id, timeProvider ?? TimeProvider.System)
         {
             _events = events ?? [],
@@ -65,9 +65,9 @@ public sealed class EventStream<TId> : IReadOnlyCollection<StreamEvent>
     /// Append a event to the collection.
     /// </summary>
     /// <param name="e"></param>
-    public void Append(StreamEvent e)
+    public void Append(DomainEvent e)
     {
-        e.OccouredOn = _timeProvider.GetUtcNow();
+        e.OccurredOn = _timeProvider.GetUtcNow();
         _uncomitted.Add(e);
     }
 
@@ -82,7 +82,7 @@ public sealed class EventStream<TId> : IReadOnlyCollection<StreamEvent>
     /// Iterates over the comitted events
     /// </summary>
     /// <returns>Events that are committed</returns>
-    public IEnumerator<StreamEvent> GetEnumerator()
+    public IEnumerator<DomainEvent> GetEnumerator()
         => _events.ToList().GetEnumerator();
 
     /// <summary>

@@ -1,6 +1,6 @@
 using Scalar.AspNetCore;
+using StreamSharp.Core.Abstractions;
 using StreamSharp.Server.Configuration;
-using StreamSharp.Server.Features.Medialibrary;
 using StreamSharp.Server.Features.Plugins;
 using StreamSharp.UI;
 
@@ -123,7 +123,7 @@ public sealed class ServerHost(
 
                 builder.Services.AddSingleton(options);
                 builder.Services.AddEventBus();
-                builder.Services.AddTransient(typeof(IEventStore<>), typeof(EventStreamStore<>));
+                builder.Services.AddSingleton(typeof(IEventStore<>), typeof(EventStreamStore<>));
                 builder.Services.AddSingleton(_pluginManager);
                 builder.Services.AddSingleton(this);
 

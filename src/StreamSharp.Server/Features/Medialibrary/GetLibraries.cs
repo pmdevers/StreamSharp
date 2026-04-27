@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StreamSharp.Core.Entities;
+using StreamSharp.Core.Storage;
 
 namespace StreamSharp.Server.Features.Medialibrary;
 
@@ -11,16 +13,11 @@ public record GetLibrariesRequest(
 public static class Getlibraries
 {
     public static async Task<IResult> Handle(
-        [FromServices] ILibraryStore store,
-        GetLibrariesRequest request
+        [FromServices] LibraryItemRepository store,
+        [FromBody] GetLibrariesRequest request
         )
     {
-        var libraries = await store.GetLibrariesAsync(
-            request.Page,
-            request.PageSize,
-            request.Search,
-            request.SortBy
-        );
+        var libraries = Array.Empty<Library>();
 
         return TypedResults.Ok(libraries.Select(x => new { LibraryId = x.Id, x.Name }));
     }

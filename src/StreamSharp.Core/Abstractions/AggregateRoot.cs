@@ -21,7 +21,7 @@ public static class AggregateRoot
     {
         var methodName = "Create";
         var type = typeof(TAggregate);
-        var method = type.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static, new[] { typeof(TId) });
+        var method = type.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static, [typeof(TId)]);
 
         if (method == null)
         {
@@ -133,14 +133,14 @@ public abstract class AggregateRoot<TId>(TId id)
     /// Adds and applies an event to the aggregate.
     /// </summary>
     /// <param name="e"></param>
-    protected internal void RecordEvent(StreamEvent e)
+    protected internal void RecordEvent(DomainEvent e)
     {
         ArgumentNullException.ThrowIfNull(e);
 
         RecordEvent(e, true);
     }
 
-    private void RecordEvent(StreamEvent e, bool isNew)
+    private void RecordEvent(DomainEvent e, bool isNew)
     {
         ApplyInternal(e);
         if (isNew)
@@ -150,7 +150,7 @@ public abstract class AggregateRoot<TId>(TId id)
     }
 
     private const string _applyMehodName = "Apply";
-    private void ApplyInternal(StreamEvent e)
+    private void ApplyInternal(DomainEvent e)
     {
         AggregateRoot<TId>.SafeInvokeMethod(GetType(), this, _applyMehodName, e);
     }

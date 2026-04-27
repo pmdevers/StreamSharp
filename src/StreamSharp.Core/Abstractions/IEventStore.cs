@@ -1,6 +1,4 @@
-﻿using StreamSharp.Core.Abstractions;
-
-namespace StreamSharp.Server.Features.Medialibrary;
+﻿namespace StreamSharp.Core.Abstractions;
 
 public interface IEventStore<TId>
     where TId : struct

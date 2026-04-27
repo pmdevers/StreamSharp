@@ -1,42 +1,39 @@
-﻿namespace StreamSharp.Core.Entities;
+﻿using StreamSharp.Core.Abstractions;
+using StreamSharp.Core.Events;
+
+namespace StreamSharp.Core.Entities;
 
 [GenerateId]
-public class LibraryItem
+public class LibraryItem : AggregateRoot<LibraryItemId>
 {
-    private LibraryItem() { }
-    public LibraryItemId Id { get; init; } = LibraryItemId.New();
-    public LibraryId LibraryId { get; init; }
+    private readonly Dictionary<string, string> _libraryItems = [];
+    private LibraryItem(LibraryItemId id) : base(id) { }    
+    public LibraryId LibraryId { get; private set; } = LibraryId.Empty;
 
-    public required string Name { get; init; }
-    public required string Path { get; init; }
+    public string Path { get; private set; } = string.Empty;
+    public IReadOnlyDictionary<string, string> MetaData => _libraryItems;
+    
+    public static LibraryItem Create(Library library, string path)
+    {
+        var item = new LibraryItem(LibraryItemId.New());
+        item.RecordEvent(new LibraryItemCreated(item.Id, library.Id, path));
+        return item;
+    }
 
-    public static LibraryItem Create(Library library, string name, string path)
-        => new()
-        {
-            LibraryId = library.Id,
-            Name = name,
-            Path = path
-        };
+    public void AddMetaData(string name, string value)
+    {
+        RecordEvent(new LibraryItemMetaDataAdded(Id, name, value));
+    }
 
-    public LibraryItemMetaData CreateMetaData(string name, string value)
-        => LibraryItemMetaData.Create(this, name, value);
+    internal void Apply(LibraryItemCreated @event)
+    {
+        LibraryId = @event.LibraryId;
+        Path = @event.Path;
+    }
 
-}
+    internal void Apply(LibraryItemMetaDataAdded @event)
+    {
+        _libraryItems[@event.Name] = @event.Value;
+    }
 
-[GenerateId]
-public class LibraryItemMetaData
-{
-    private LibraryItemMetaData() { }
-    public LibraryItemMetaDataId Id { get; init; } = LibraryItemMetaDataId.New();
-    public LibraryItemId LibraryItemId { get; private set; } = LibraryItemId.Empty;
-    public string Name { get; private set; } = string.Empty;
-    public string Value { get; private set; } = string.Empty;
-
-    public static LibraryItemMetaData Create(LibraryItem item, string name, string value)
-        => new()
-        {
-            LibraryItemId = item.Id,
-            Name = name,
-            Value = value
-        };
 }
