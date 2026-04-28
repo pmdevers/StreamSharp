@@ -1,0 +1,27 @@
+[
+  {
+    "id": "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+    "title": "Movies",
+    "description": "Feature films from every genre."
+  },
+  {
+    "id": "f8a2b5d3-3e7c-4f1a-9b4e-56c7d2f0a823",
+    "title": "Series",
+    "description": "Full seasons and continuing episodes."
+  },
+  {
+    "id": "b3d9f1e4-6c2a-4b7d-a8f5-23e4c6d1b902",
+    "title": "Live TV",
+    "description": "Live channels streaming right now."
+  },
+  {
+    "id": "e7c4a2f6-1b8d-4c5e-b9a3-78d2e5c3f160",
+    "title": "Music",
+    "description": "Albums, mixes, and live sessions."
+  },
+  {
+    "id": "a5f8b3d7-2c4e-4a9f-c6b1-45d7e8f2c094",
+    "title": "Private",
+    "description": "Your private collection of media."
+  }
+]

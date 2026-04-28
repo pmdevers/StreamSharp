@@ -1,0 +1,357 @@
+[
+    {
+        "id":  "3461e1fe-db35-4dd1-9ad1-316ea7365574",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Action",
+        "title":  "Arctic Signal",
+        "subtitle":  "Theatrical cut",
+        "meta":  "2h 04m",
+        "tag":  "Action",
+        "art":  "linear-gradient(135deg, rgba(6,27,44,0.9), rgba(38,96,150,0.72))"
+    },
+    {
+        "id":  "ee74919c-e1a6-4d92-8dee-f7583b09ef33",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Action",
+        "title":  "Open Water FC",
+        "subtitle":  "Director\u0027s cut",
+        "meta":  "1h 58m",
+        "tag":  "4K",
+        "art":  "linear-gradient(135deg, rgba(4,42,45,0.95), rgba(58,203,170,0.68))"
+    },
+    {
+        "id":  "aeddd041-0c34-4b59-985f-1707b2cebb68",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Action",
+        "title":  "Iron Current",
+        "subtitle":  "Special ops mission",
+        "meta":  "2h 06m",
+        "tag":  "Action",
+        "art":  "linear-gradient(135deg, rgba(12,28,56,0.95), rgba(48,112,198,0.7))"
+    },
+    {
+        "id":  "5c55cf7d-b2e5-485c-bf13-731d61f8b254",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Action",
+        "title":  "Vortex Nine",
+        "subtitle":  "High-speed chase",
+        "meta":  "1h 49m",
+        "tag":  "Top pick",
+        "art":  "linear-gradient(135deg, rgba(26,18,52,0.95), rgba(112,84,232,0.7))"
+    },
+    {
+        "id":  "fde935a0-0eea-46a7-a183-6846d1a2f31e",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Action",
+        "title":  "Black Harbor",
+        "subtitle":  "Covert extraction",
+        "meta":  "2h 12m",
+        "tag":  "4K",
+        "art":  "linear-gradient(135deg, rgba(7,30,40,0.95), rgba(47,143,168,0.7))"
+    },
+    {
+        "id":  "533d5e10-e2b4-4b80-9de0-46472dee8f33",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Action",
+        "title":  "Afterburn",
+        "subtitle":  "Jet squadron revolt",
+        "meta":  "1h 57m",
+        "tag":  "New",
+        "art":  "linear-gradient(135deg, rgba(58,22,12,0.95), rgba(228,112,62,0.72))"
+    },
+    {
+        "id":  "fb384110-6221-400c-9c07-0830b317b36f",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Action",
+        "title":  "Steel Meridian",
+        "subtitle":  "Borderline pursuit",
+        "meta":  "2h 03m",
+        "tag":  "Action",
+        "art":  "linear-gradient(135deg, rgba(18,24,36,0.95), rgba(94,122,166,0.7))"
+    },
+    {
+        "id":  "0f667a8a-6c25-42b5-b13d-a9e14399a8e7",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Action",
+        "title":  "Terminal Echo",
+        "subtitle":  "Urban blackout raid",
+        "meta":  "1h 46m",
+        "tag":  "Fast paced",
+        "art":  "linear-gradient(135deg, rgba(38,12,24,0.95), rgba(190,76,108,0.72))"
+    },
+    {
+        "id":  "544f098a-5e7c-4667-b358-0788936a3d2d",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Action",
+        "title":  "Shadow Convoy",
+        "subtitle":  "Interstate takedown",
+        "meta":  "2h 09m",
+        "tag":  "Binge now",
+        "art":  "linear-gradient(135deg, rgba(15,29,47,0.95), rgba(58,130,212,0.7))"
+    },
+    {
+        "id":  "e3061f05-ed51-46eb-bf08-803778af0ea5",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Action",
+        "title":  "Redline Sector",
+        "subtitle":  "Underground resistance",
+        "meta":  "1h 54m",
+        "tag":  "Editor pick",
+        "art":  "linear-gradient(135deg, rgba(47,17,17,0.95), rgba(218,82,82,0.72))"
+    },
+    {
+        "id":  "3b0ecec7-c54b-4baf-8a4d-8f2352dc30f0",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Action",
+        "title":  "Delta Frontier",
+        "subtitle":  "Outpost siege",
+        "meta":  "2h 15m",
+        "tag":  "Premium",
+        "art":  "linear-gradient(135deg, rgba(9,33,29,0.95), rgba(52,170,148,0.7))"
+    },
+    {
+        "id":  "962e5469-458b-42db-b41a-d4a52edbd557",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Action",
+        "title":  "Pulse Strike",
+        "subtitle":  "Counterforce protocol",
+        "meta":  "1h 51m",
+        "tag":  "Action",
+        "art":  "linear-gradient(135deg, rgba(24,12,46,0.95), rgba(132,90,232,0.72))"
+    },
+    {
+        "id":  "82e742fb-b004-4cd4-83fe-d05a8bcba38c",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Thriller",
+        "title":  "Neon District",
+        "subtitle":  "Director\u0027s Cut",
+        "meta":  "1h 52m",
+        "tag":  "New",
+        "art":  "linear-gradient(135deg, rgba(52,15,42,0.95), rgba(235,84,133,0.72))"
+    },
+    {
+        "id":  "23a6b81b-2ad4-4658-816a-c0fd947d94f4",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Thriller",
+        "title":  "Helios Down",
+        "subtitle":  "Catastrophe thriller",
+        "meta":  "2h 08m",
+        "tag":  "New tonight",
+        "art":  "linear-gradient(135deg, rgba(63,20,12,0.95), rgba(244,124,54,0.72))"
+    },
+    {
+        "id":  "7aa359c3-6638-4d2f-9844-082db5a3ea99",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Sci-Fi",
+        "title":  "The Ninth Orbit",
+        "subtitle":  "Epic space opera",
+        "meta":  "2h 18m",
+        "tag":  "4K",
+        "art":  "linear-gradient(140deg, rgba(7,20,35,0.96), rgba(65,144,255,0.72))"
+    },
+    {
+        "id":  "a282dbf7-f68c-4b6d-9d3e-e1916db7b92d",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Sci-Fi",
+        "title":  "Signal Bloom",
+        "subtitle":  "AI conspiracy",
+        "meta":  "1h 47m",
+        "tag":  "Sci-Fi",
+        "art":  "linear-gradient(135deg, rgba(2,49,71,0.95), rgba(42,188,231,0.72))"
+    },
+    {
+        "id":  "38a9a529-87a6-4325-af17-341315d148cc",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Drama",
+        "title":  "Aerial",
+        "subtitle":  "Modern romance",
+        "meta":  "2h 01m",
+        "tag":  "Editor pick",
+        "art":  "linear-gradient(135deg, rgba(66,22,28,0.95), rgba(255,108,139,0.72))"
+    },
+    {
+        "id":  "83b06125-924b-493e-8af2-e1b1961188cf",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Documentary",
+        "title":  "Frame by Frame",
+        "subtitle":  "Cinema craft",
+        "meta":  "5 parts",
+        "tag":  "Documentary",
+        "art":  "linear-gradient(135deg, rgba(35,28,15,0.95), rgba(201,155,67,0.72))"
+    },
+    {
+        "id":  "df1b0b86-3cea-447b-8be4-28f70199d90c",
+        "libraryId":  "c1a6e3d2-7f4b-4a8e-b5c9-12f3a8e6d041",
+        "genre":  "Documentary",
+        "title":  "City Tempo",
+        "subtitle":  "Urban culture",
+        "meta":  "4 parts",
+        "tag":  "Staff pick",
+        "art":  "linear-gradient(135deg, rgba(50,17,35,0.95), rgba(240,95,143,0.72))"
+    },
+    {
+        "id":  "1273226a-9491-45d9-8122-5f193a1336fc",
+        "libraryId":  "f8a2b5d3-3e7c-4f1a-9b4e-56c7d2f0a823",
+        "genre":  "Sci-Fi",
+        "title":  "Second Sun",
+        "subtitle":  "Episode 7 waiting",
+        "meta":  "New episode available",
+        "progress":  57,
+        "tag":  "Next up",
+        "art":  "linear-gradient(140deg, rgba(49,18,7,0.96), rgba(255,126,74,0.7))"
+    },
+    {
+        "id":  "134dc281-2d03-4aed-80d3-9638384bd456",
+        "libraryId":  "f8a2b5d3-3e7c-4f1a-9b4e-56c7d2f0a823",
+        "genre":  "Mystery",
+        "title":  "Glass Harbor",
+        "subtitle":  "Limited mystery series",
+        "meta":  "8 episodes",
+        "tag":  "Just added",
+        "art":  "linear-gradient(140deg, rgba(16,17,42,0.96), rgba(108,95,255,0.65))"
+    },
+    {
+        "id":  "f98943f1-e928-4ac7-b776-32e5f828474d",
+        "libraryId":  "f8a2b5d3-3e7c-4f1a-9b4e-56c7d2f0a823",
+        "genre":  "Mystery",
+        "title":  "Low Tide",
+        "subtitle":  "Coastal mystery",
+        "meta":  "7 episodes",
+        "tag":  "Binge now",
+        "art":  "linear-gradient(135deg, rgba(7,36,44,0.95), rgba(59,164,173,0.72))"
+    },
+    {
+        "id":  "5a254a95-61b7-4c1f-a67b-35ae637f536c",
+        "libraryId":  "f8a2b5d3-3e7c-4f1a-9b4e-56c7d2f0a823",
+        "genre":  "Anime",
+        "title":  "Mosaic//Run",
+        "subtitle":  "Anime original",
+        "meta":  "12 episodes",
+        "tag":  "Fresh",
+        "art":  "linear-gradient(140deg, rgba(32,10,47,0.96), rgba(234,112,255,0.7))"
+    },
+    {
+        "id":  "01011e5d-7bee-467f-b2d9-52dac68fa73f",
+        "libraryId":  "f8a2b5d3-3e7c-4f1a-9b4e-56c7d2f0a823",
+        "genre":  "Crime",
+        "title":  "Cold Line",
+        "subtitle":  "Crime serial",
+        "meta":  "98% match",
+        "tag":  "Top 10",
+        "art":  "linear-gradient(135deg, rgba(15,29,53,0.96), rgba(90,153,240,0.72))"
+    },
+    {
+        "id":  "e6a5b0bd-6575-4b3f-84c3-a43eb7cb41d5",
+        "libraryId":  "f8a2b5d3-3e7c-4f1a-9b4e-56c7d2f0a823",
+        "genre":  "Drama",
+        "title":  "Northbound",
+        "subtitle":  "Survival drama",
+        "meta":  "10 episodes",
+        "tag":  "Award winner",
+        "art":  "linear-gradient(135deg, rgba(18,37,34,0.95), rgba(63,179,168,0.68))"
+    },
+    {
+        "id":  "9237e7bc-05c3-4ffc-b397-d5e284f64385",
+        "libraryId":  "f8a2b5d3-3e7c-4f1a-9b4e-56c7d2f0a823",
+        "genre":  "Thriller",
+        "title":  "Silent Relay",
+        "subtitle":  "Political spy drama",
+        "meta":  "8 episodes",
+        "tag":  "Thriller",
+        "art":  "linear-gradient(135deg, rgba(35,11,21,0.95), rgba(187,62,105,0.72))"
+    },
+    {
+        "id":  "ef14293a-e332-4433-8ee4-f1b51a0d2ece",
+        "libraryId":  "b3d9f1e4-6c2a-4b7d-a8f5-23e4c6d1b902",
+        "genre":  "Film",
+        "title":  "Cinema One",
+        "subtitle":  "Now: The Deep Current premiere",
+        "meta":  "Next: Glass Harbor marathon",
+        "overview":  "A live channel dedicated to feature premieres and weekend marathons.",
+        "tag":  "Live",
+        "art":  "linear-gradient(135deg, rgba(10,23,41,0.94), rgba(61,114,219,0.68))"
+    },
+    {
+        "id":  "99a36ad9-ee9a-4593-b2d3-db17170a56e6",
+        "libraryId":  "b3d9f1e4-6c2a-4b7d-a8f5-23e4c6d1b902",
+        "genre":  "Sports",
+        "title":  "Arena X",
+        "subtitle":  "Now: Open Water FC replay",
+        "meta":  "Next: Inside the Playbook",
+        "overview":  "Sports events, highlights, and behind-the-scenes postgame breakdowns.",
+        "tag":  "Live",
+        "art":  "linear-gradient(135deg, rgba(15,35,24,0.94), rgba(47,167,116,0.68))"
+    },
+    {
+        "id":  "1885003a-97f5-4b38-822a-1de39f1d644f",
+        "libraryId":  "b3d9f1e4-6c2a-4b7d-a8f5-23e4c6d1b902",
+        "genre":  "Sports",
+        "title":  "Open Water FC",
+        "subtitle":  "Matchday · Live",
+        "meta":  "33 min in",
+        "tag":  "Live",
+        "art":  "linear-gradient(135deg, rgba(4,42,45,0.95), rgba(58,203,170,0.68))"
+    },
+    {
+        "id":  "0bca8bb0-2353-4cbe-a6e7-6562fae254b5",
+        "libraryId":  "b3d9f1e4-6c2a-4b7d-a8f5-23e4c6d1b902",
+        "genre":  "Documentary",
+        "title":  "DocuGrid",
+        "subtitle":  "Now: Depth Chart",
+        "meta":  "Next: Frame by Frame",
+        "overview":  "Back-to-back documentary features with editorial picks.",
+        "tag":  "Live",
+        "art":  "linear-gradient(135deg, rgba(38,25,8,0.94), rgba(192,138,49,0.68))"
+    },
+    {
+        "id":  "66778260-5ca4-44b7-8571-f83987ebfd16",
+        "libraryId":  "b3d9f1e4-6c2a-4b7d-a8f5-23e4c6d1b902",
+        "genre":  "Thriller",
+        "title":  "Night Signal",
+        "subtitle":  "Now: Back Channel",
+        "meta":  "Next: Silent Relay",
+        "overview":  "Late-night thriller lineup with uninterrupted play.",
+        "tag":  "Live",
+        "art":  "linear-gradient(135deg, rgba(26,17,42,0.94), rgba(151,104,235,0.68))"
+    },
+    {
+        "id":  "78497eb5-2e44-43ec-bbf3-c0b26917d0e7",
+        "libraryId":  "e7c4a2f6-1b8d-4c5e-b9a3-78d2e5c3f160",
+        "genre":  "Electronic",
+        "title":  "Neon Pulse",
+        "subtitle":  "Extended DJ set",
+        "meta":  "2h 14m",
+        "tag":  "New mix",
+        "art":  "linear-gradient(135deg, rgba(10,5,40,0.95), rgba(110,60,255,0.72))"
+    },
+    {
+        "id":  "d51aac16-3fdb-4ec4-8b09-5f7562a12ccf",
+        "libraryId":  "e7c4a2f6-1b8d-4c5e-b9a3-78d2e5c3f160",
+        "genre":  "Electronic",
+        "title":  "Ambient Drift",
+        "subtitle":  "Chill session",
+        "meta":  "1h 38m",
+        "tag":  "Chill",
+        "art":  "linear-gradient(135deg, rgba(5,25,40,0.95), rgba(40,160,200,0.68))"
+    },
+    {
+        "id":  "22912bb9-df8e-4b4f-ae98-2cb89e44f12e",
+        "libraryId":  "e7c4a2f6-1b8d-4c5e-b9a3-78d2e5c3f160",
+        "genre":  "Classical",
+        "title":  "Baroque Sessions",
+        "subtitle":  "Live orchestral recording",
+        "meta":  "1h 22m",
+        "tag":  "Live",
+        "art":  "linear-gradient(135deg, rgba(30,20,5,0.95), rgba(200,160,60,0.72))"
+    },
+    {
+        "id":  "629f17a4-50cc-4cff-9c0f-15221de9a231",
+        "libraryId":  "e7c4a2f6-1b8d-4c5e-b9a3-78d2e5c3f160",
+        "genre":  "Hip-Hop",
+        "title":  "Street Frequencies",
+        "subtitle":  "Curated compilation",
+        "meta":  "1h 05m",
+        "tag":  "Editor pick",
+        "art":  "linear-gradient(135deg, rgba(20,10,5,0.95), rgba(220,100,40,0.72))"
+    }
+]

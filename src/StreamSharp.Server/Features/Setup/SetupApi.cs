@@ -2,7 +2,7 @@
 
 public static class SetupApi
 {
-    extension(WebApplication app)
+    extension(IEndpointRouteBuilder app)
     {
         public void MapSetupApi()
         {

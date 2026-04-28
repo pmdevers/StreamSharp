@@ -10,7 +10,7 @@ public static class UninstallPlugin
         [FromServices] ServerHost serverHost
         )
     {
-        pluginManager.UninstallPlugin(name);
+        await pluginManager.UninstallPlugin(name);
 
         // Trigger server restart to remove plugin services and endpoints
         _ = Task.Run(async () =>

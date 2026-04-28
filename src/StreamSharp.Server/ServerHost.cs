@@ -1,3 +1,4 @@
+using Microsoft.Extensions.FileProviders;
 using Scalar.AspNetCore;
 using StreamSharp.Server.Configuration;
 using StreamSharp.Server.Features.Plugins;
@@ -105,6 +106,7 @@ public sealed class ServerHost(
                 _pluginManager.ClearRestartFlag();
 
                 var builder = WebApplication.CreateBuilder();
+
                 builder.Services.AddOpenApi(options =>
                 {
                     options.AddDocumentTransformer((document, _, _) =>
@@ -117,7 +119,9 @@ public sealed class ServerHost(
                         return Task.CompletedTask;
                     });
                 });
+
                 builder.Services.AddSingleton(options);
+                builder.Services.AddEventBus();
                 builder.Services.AddSingleton(_pluginManager);
                 builder.Services.AddSingleton(this);
 
@@ -125,16 +129,33 @@ public sealed class ServerHost(
                 _pluginManager.ApplyServicesToBuilder(builder.Services);
 
                 configure?.Invoke(builder);
-                app = builder.Build();
 
+                app = builder.Build();
+                
+                var spaProvider = app.Services.GetRequiredService<IFileProvider>();
 
                 app.MapOpenApi();
                 app.MapScalarApiReference();
+
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = spaProvider,
+                    RequestPath = ""
+                });
 
                 // Apply plugin endpoints
                 _pluginManager.ApplyEndpointsToApp(app);
 
                 use?.Invoke(app);
+
+
+                app.MapFallback(async context =>
+                {
+                    var file = spaProvider.GetFileInfo("index.html");
+                    context.Response.ContentType = "text/html";
+                    await context.Response.SendFileAsync(file);
+                });
+
                 await app.RunAsync(_cts.Token);
             }
             catch (Exception ex) when (options.EnableRestartOnFailure && !_cts.IsCancellationRequested)

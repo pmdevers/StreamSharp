@@ -1,3 +1,5 @@
+using StreamSharp.Core.Abstractions;
+using StreamSharp.Core.Events;
 using StreamSharp.Server;
 using StreamSharp.Server.Features;
 using StreamSharp.Server.Features.Medialibrary;
@@ -28,7 +30,7 @@ var host = ServerHost.CreateBuilder()
     })
     .Configure((builder) =>
     {
-        builder.Services.AddMedialibraryApi();
+        builder.Services.AddMessageHandler<LibraryCreated>(CreateLibrary.HandleAsync);
     })
     .Use((app) =>
     {
@@ -39,3 +41,5 @@ var host = ServerHost.CreateBuilder()
     }).Build();
 
 await host.StartAsync();
+
+

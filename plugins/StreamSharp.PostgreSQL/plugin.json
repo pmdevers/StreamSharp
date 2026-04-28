@@ -1,0 +1,12 @@
+{
+    "name": "StreamSharp.PostgreSQL",
+    "version": "1.0.0",
+    "entryAssembly": "StreamSharp.PostgreSQL.dll",
+    "includedAssemblies": [
+        "Npgsql.dll",
+        "Npgsql.EntityFrameworkCore.PostgreSQL.dll",
+        "StreamSharp.PostgreSQL.dll",
+        "StreamSharp.PostgreSQL.deps.json",
+        "StreamSharp.PostgreSQL.runtimeconfig.json"
+    ]
+}

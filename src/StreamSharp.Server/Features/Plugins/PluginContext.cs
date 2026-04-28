@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
-using StreamSharp.Plugin;
+using StreamSharp.Core.Abstractions;
 
 namespace StreamSharp.Server.Features.Plugins;
 
@@ -43,16 +43,10 @@ internal class PluginContext : IPluginContext
         }
     }
 
-    private class ServiceCollectionTracker : IServiceCollection
+    private sealed class ServiceCollectionTracker(IServiceCollection inner, List<ServiceDescriptor> tracking) : IServiceCollection
     {
-        private readonly IServiceCollection _inner;
-        private readonly List<ServiceDescriptor> _tracking;
-
-        public ServiceCollectionTracker(IServiceCollection inner, List<ServiceDescriptor> tracking)
-        {
-            _inner = inner;
-            _tracking = tracking;
-        }
+        private readonly IServiceCollection _inner = inner;
+        private readonly List<ServiceDescriptor> _tracking = tracking;
 
         public ServiceDescriptor this[int index]
         {
@@ -84,16 +78,10 @@ internal class PluginContext : IPluginContext
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
-    private class EndpointRouteBuilderTracker : IEndpointRouteBuilder
+    private sealed class EndpointRouteBuilderTracker(IEndpointRouteBuilder inner, List<Endpoint> tracking) : IEndpointRouteBuilder
     {
-        private readonly IEndpointRouteBuilder _inner;
-        private readonly List<Endpoint> _tracking;
-
-        public EndpointRouteBuilderTracker(IEndpointRouteBuilder inner, List<Endpoint> tracking)
-        {
-            _inner = inner;
-            _tracking = tracking;
-        }
+        private readonly IEndpointRouteBuilder _inner = inner;
+        private readonly List<Endpoint> _tracking = tracking;
 
         public IServiceProvider ServiceProvider => _inner.ServiceProvider;
 
@@ -110,14 +98,9 @@ internal class PluginContext : IPluginContext
         public IApplicationBuilder CreateApplicationBuilder() => _inner.CreateApplicationBuilder();
     }
 
-    private class TrackingEndpointDataSource : EndpointDataSource
+    private sealed class TrackingEndpointDataSource(List<Endpoint> tracking) : EndpointDataSource
     {
-        private readonly List<Endpoint> _tracking;
-
-        public TrackingEndpointDataSource(List<Endpoint> tracking)
-        {
-            _tracking = tracking;
-        }
+        private readonly List<Endpoint> _tracking = tracking;
 
         public override IReadOnlyList<Endpoint> Endpoints
         {

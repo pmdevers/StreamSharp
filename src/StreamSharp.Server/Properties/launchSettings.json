@@ -6,9 +6,10 @@
       "dotnetRunMessages": true,
       "launchBrowser": false,
       "applicationUrl": "http://localhost:5111",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development",
+            "POSTGRES_CONNECTION_STRING": "Host=localhost;Port=5432;Database=streamsharp;Username=postgres;Password=postgres"
+        }
     }
   }
 }

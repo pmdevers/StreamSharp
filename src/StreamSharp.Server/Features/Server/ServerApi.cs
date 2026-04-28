@@ -4,7 +4,7 @@ namespace StreamSharp.Server.Features.Server;
 
 public static class ServerApi
 {
-    extension(WebApplication app)
+    extension(IEndpointRouteBuilder app)
     {
         public void MapServerApi()
         {

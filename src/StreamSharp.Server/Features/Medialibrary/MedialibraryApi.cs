@@ -1,18 +1,8 @@
-﻿using StreamSharp.Server.Features.Medialibrary.Api;
-
-namespace StreamSharp.Server.Features.Medialibrary;
+﻿namespace StreamSharp.Server.Features.Medialibrary;
 
 public static class MedialibraryApi
 {
-    extension(IServiceCollection services)
-    {
-        public void AddMedialibraryApi()
-        {
-            services.AddSingleton<MedialibraryManager>();
-        }
-    }
-
-    extension(WebApplication app)
+    extension(IEndpointRouteBuilder app)
     {
         public void MapMedialibraryApi()
         {
@@ -33,6 +23,10 @@ public static class MedialibraryApi
             group.MapPost("/{libraryId}/scan", ScanLibrary.Handle)
                 .WithName("ScanLibrary")
                 .WithDescription("Scans a media library for new content.");
+
+            group.MapGet("/{libraryId}/items", GetLibraryItems.Handle)
+                .WithName("GetLibraryItems")
+                .WithDescription("Retrieves items in a media library.");
         }
     }
 }
