@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
-using StreamSharp.Plugin;
+using StreamSharp.Core.Abstractions;
 
 namespace StreamSharp.Server.Features.Plugins;
 

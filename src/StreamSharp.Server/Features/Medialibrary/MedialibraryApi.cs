@@ -1,17 +1,7 @@
-﻿using StreamSharp.Server.Features.Medialibrary.Api;
-
-namespace StreamSharp.Server.Features.Medialibrary;
+﻿namespace StreamSharp.Server.Features.Medialibrary;
 
 public static class MedialibraryApi
 {
-    extension(IServiceCollection services)
-    {
-        public void AddMedialibraryApi()
-        {
-            services.AddSingleton<MedialibraryManager>();
-        }
-    }
-
     extension(WebApplication app)
     {
         public void MapMedialibraryApi()
