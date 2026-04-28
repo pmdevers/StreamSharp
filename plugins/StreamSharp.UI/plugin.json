@@ -1,0 +1,8 @@
+{
+    "name": "StreamSharp.UI",
+    "version": "1.0.0",
+    "entryAssembly": "StreamSharp.UI.dll",
+    "includedAssemblies": [
+        "StreamSharp.UI.dll"
+    ]
+}

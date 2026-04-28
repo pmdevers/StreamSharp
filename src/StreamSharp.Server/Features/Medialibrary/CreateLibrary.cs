@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StreamSharp.Core.Abstractions;
 using StreamSharp.Core.Entities;
-using StreamSharp.Core.Storage;
 
 namespace StreamSharp.Server.Features.Medialibrary;
 
@@ -9,16 +9,17 @@ public static class CreateLibrary
     public record CreateLibraryRequest(string Name);
 
     public static async Task<IResult> Handle(
-        [FromServices] LibraryRepository libraryRepository,
-        [FromServices] LibraryItemRepository libraryItemRepository,
-        [FromBody] CreateLibraryRequest request)
+        [FromServices] IUnitOfWork uow,
+        [FromBody] CreateLibraryRequest request,
+        CancellationToken cancellationToken)
     {
-        var library = Library.Create(request.Name);
-    
-        var libraryItem = library.CreateItem("/path/to/media/file");
+        var repo = uow.GetRepository<Library, LibraryId>();
 
-        await libraryRepository.SaveAsync(library);
-        await libraryItemRepository.SaveAsync(libraryItem);
+        var library = Library.Create(request.Name);
+
+        repo.Add(library);
+
+        await uow.SaveChangesAsync(cancellationToken);
 
         return Results.Ok(library);
     }

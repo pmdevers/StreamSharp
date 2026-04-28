@@ -1,24 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StreamSharp.Core.Entities;
-using StreamSharp.Core.Storage;
+using StreamSharp.Core.Queries;
 
 namespace StreamSharp.Server.Features.Medialibrary;
-
-public record GetLibrariesRequest(
-    [FromQuery] int Page = 1,
-    [FromQuery] int PageSize = 10,
-    [FromQuery] string? Search = null,
-    [FromQuery] string? SortBy = null);
 
 public static class Getlibraries
 {
     public static async Task<IResult> Handle(
-        [FromServices] LibraryItemRepository store,
-        [FromBody] GetLibrariesRequest request
+        [FromServices] ILibraryQueries libraryQueries,
+        CancellationToken cancellationToken,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? search = null,
+        [FromQuery] string? sortBy = null
         )
     {
-        var libraries = Array.Empty<Library>();
+        var libraries = await libraryQueries.GetLibrariesAsync(page, pageSize, search, sortBy, cancellationToken);
 
-        return TypedResults.Ok(libraries.Select(x => new { LibraryId = x.Id, x.Name }));
+        return TypedResults.Ok(libraries);
     }
 }

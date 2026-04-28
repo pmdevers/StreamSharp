@@ -1,27 +1,26 @@
-﻿using StreamSharp.Core.Abstractions;
-using StreamSharp.Server.Features.Medialibrary.Events;
-
-namespace StreamSharp.Core.Entities;
+﻿namespace StreamSharp.Core.Entities;
 
 [GenerateId]
-public class Library() : AggregateRoot<LibraryId>(LibraryId.New())
+public class Library()
 {
-    public string Name { get; private set; } = string.Empty;
+    public LibraryId Id { get; init; }
+    public string Name { get; init; } = string.Empty;
+    public DateTimeOffset CreatedAt { get; init; }
 
-    public static Library Create(string name)
+    public static Library Create(string name, TimeProvider? timeProvider = null)
     {
-        var library = new Library();
-        library.RecordEvent(new LibraryCreated(name));
+        var provider = (timeProvider ?? TimeProvider.System);
+        var library = new Library
+        {
+            Id = LibraryId.New(),
+            Name = name,
+            CreatedAt = provider.GetUtcNow()
+        };
         return library;
     }
 
-    public LibraryItem CreateItem(string path)
+    public LibraryItem CreateItem(string path, TimeProvider? timeProvider = null)
     {
-        return LibraryItem.Create(this, path);
-    }
-
-    public void Apply(LibraryCreated @event)
-    {
-        Name = @event.Name;
+        return LibraryItem.Create(this, path, timeProvider);
     }
 }

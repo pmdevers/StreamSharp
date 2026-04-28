@@ -115,37 +115,3 @@ public class EventBusBackgroundService(MessageQueue queue, IServiceScopeFactory 
         }
     }
 }
-
-
-public class EventStreamStore<TId>(IEventBus eventBus) : IEventStore<TId>
-    where TId : struct
-{
-    private readonly ConcurrentDictionary<TId, List<DomainEvent>> _store = new();
-
-    public Task<EventStream<TId>> LoadAsync(TId id, CancellationToken cancellationToken = default)
-    {
-        if(_store.TryGetValue(id, out var events))
-        {
-            return Task.FromResult(EventStream<TId>.Create(id, [.. events]));
-        }
-        
-        return Task.FromResult(EventStream<TId>.Create(id));
-    }
-
-    public async Task<EventStream<TId>> SaveAsync(EventStream<TId> streamEvents, CancellationToken cancellationToken = default)
-    {
-        var uncommitted = streamEvents.GetUncommittedEvents();
-        var events = _store.AddOrUpdate(streamEvents.Id, [.. streamEvents], (_, existing) =>
-        {
-            existing.AddRange(uncommitted);
-            return existing;
-        });
-
-        foreach (var e in uncommitted)
-        {
-            await eventBus.PublishAsync(e, cancellationToken);
-        }
-
-        return EventStream<TId>.Create(streamEvents.Id, [.. events]);
-    }
-}

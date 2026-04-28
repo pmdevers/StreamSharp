@@ -1,17 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StreamSharp.Core.Entities;
-using StreamSharp.Core.Storage;
+using StreamSharp.Core.Queries;
 
 namespace StreamSharp.Server.Features.Medialibrary;
 
 public static class GetLibraryById
 {
     public static async Task<IResult> Handle(
-        [FromServices] LibraryRepository store,
-        LibraryId libraryId)
+        [FromServices] ILibraryQueries libraryQueries,
+        [FromRoute] LibraryId libraryId,
+        CancellationToken cancellationToken)
     {
-        var library = await store.GetAsync(libraryId);
+        var library = await libraryQueries.GetLibraryByIdAsync(libraryId, cancellationToken);
 
-        return TypedResults.Ok(new { LibraryId = library.Id, library.Name });
+        return TypedResults.Ok(library);
     }
 }

@@ -1,4 +1,4 @@
-﻿using StreamSharp.Plugin;
+﻿using StreamSharp.Core.Abstractions;
 using System.IO.Compression;
 using System.Text.Json;
 
@@ -63,7 +63,10 @@ public class PluginManager(string pluginsPath)
     {
         string configPath = Path.Combine(pluginDir, "plugin.json");
         string json = File.ReadAllText(configPath);
-        var config = JsonSerializer.Deserialize<PluginConfig>(json, JsonSerializerOptions.Web);
+        var config = JsonSerializer.Deserialize<PluginConfig>(json, JsonSerializerOptions.Web)
+            ?? throw new InvalidOperationException($"Failed to deserialize plugin config at '{configPath}'.");
+
+        Console.WriteLine($"Loading plugin: {config.Name} - {config.Version}.");
 
         var ctx = new PluginLoadContext(pluginDir);
         string assemblyPath = Path.Combine(pluginDir, config.EntryAssembly);
@@ -71,7 +74,8 @@ public class PluginManager(string pluginsPath)
         var asm = ctx.LoadFromAssemblyPath(assemblyPath);
         var pluginType = asm.GetTypes().First(t => typeof(IPlugin).IsAssignableFrom(t));
 
-        var instance = Activator.CreateInstance(pluginType) as IPlugin;
+        var instance = Activator.CreateInstance(pluginType) as IPlugin
+            ?? throw new InvalidOperationException($"Failed to create an instance of plugin type '{pluginType.FullName}'.");
         var pluginContext = new PluginContext();
 
         var entry = new PluginEntry(ctx, instance, pluginContext, config.Name);
@@ -83,7 +87,7 @@ public class PluginManager(string pluginsPath)
         return instance;
     }
 
-    public void UninstallPlugin(string name)
+    public async Task UninstallPlugin(string name)
     {
         if (!_loaded.TryGetValue(name, out var entry))
             return;
@@ -103,14 +107,10 @@ public class PluginManager(string pluginsPath)
         // Remove from dictionary to clear strong reference
         _loaded.Remove(name);
 
-        // Clear local references
-        entry = default;
-
         // Wait for the AssemblyLoadContext to be garbage collected
         for (int i = 0; weakRef.IsAlive && i < 10; i++)
         {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
+            await Task.Delay(50);
         }
 
         try
@@ -139,9 +139,9 @@ public class PluginManager(string pluginsPath)
 
 public class PluginConfig
 {
-    public string Name { get; set; }
-    public string Version { get; set; }
-    public string EntryAssembly { get; set; }
+    public required string Name { get; set; }
+    public required string Version { get; set; }
+    public required string EntryAssembly { get; set; }
 }
 
 internal record PluginEntry(

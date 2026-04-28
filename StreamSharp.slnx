@@ -4,15 +4,30 @@
     <File Path="docs/introduction.md" />
     <File Path="docs/toc.yml" />
   </Folder>
+  <Folder Name="/plugins/">
+    <Project Path="plugins/StreamSharp.DummyPlugin/StreamSharp.DummyPlugin.csproj" />
+    <Project Path="plugins/StreamSharp.PostgreSQL/StreamSharp.PostgreSQL.csproj" />
+    <Project Path="plugins/StreamSharp.UI/StreamSharp.UI.csproj" />
+  </Folder>
+  <Folder Name="/Solution/">
+    <File Path=".dockerignore" />
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="CODE_OF_CONDUCT.md" />
+    <File Path="Directory.Packages.props" />
+    <File Path="docfx.json" />
+    <File Path="docker-compose.yaml" />
+    <File Path="index.md" />
+    <File Path="LICENSE" />
+    <File Path="nuget.config" />
+    <File Path="README.md" />
+    <File Path="toc.yml" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/StreamSharp.Core/StreamSharp.Core.csproj" Id="78d4bda5-ee1e-46b8-aa81-6957a6143ed1" />
-    <Project Path="src/StreamSharp.DummyPlugin/StreamSharp.DummyPlugin.csproj" Id="e7616871-897b-4cdb-8f17-fb5f347b0ef9" />
-    <Project Path="src/StreamSharp.Plugin/StreamSharp.Plugin.csproj" Id="7b0a545b-6db2-445d-8456-b66222498e93" />
-    <Project Path="src/StreamSharp.PostgresSQL/StreamSharp.PostgresSQL.csproj" Id="0e49a96a-c8c7-47fd-bb18-cc11aa1c4d7b" />
     <Project Path="src/StreamSharp.Server/StreamSharp.Server.csproj" Id="95366756-a79f-49ec-b54c-e7a99e5f67ec" />
     <Project Path="src/StreamSharp.SourceGenerators/StreamSharp.SourceGenerators.csproj" Id="3f376392-275c-4cae-85c3-ad50d12b3873" />
     <Project Path="src/StreamSharp.Stream/StreamSharp.Stream.csproj" Id="a4c197c0-8643-4f05-a144-7a8c7eb3a219" />
-    <Project Path="src/StreamSharp.UI/StreamSharp.UI.csproj" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="test/StreamSharp.Server.Tests/StreamSharp.Server.Tests.csproj" Id="f3243632-dfc8-4728-a1aa-84e24da8d5d2" />

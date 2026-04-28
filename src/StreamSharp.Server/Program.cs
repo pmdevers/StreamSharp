@@ -1,11 +1,7 @@
 using StreamSharp.Core;
-using StreamSharp.Core.Events;
 using StreamSharp.Server;
 using StreamSharp.Server.Features;
-using StreamSharp.Server.Features.Medialibrary;
-using StreamSharp.Server.Features.Medialibrary.Events;
 using StreamSharp.Server.Features.Setup;
-using static StreamSharp.Server.Features.Medialibrary.CreateLibrary;
 
 if (false)
 {

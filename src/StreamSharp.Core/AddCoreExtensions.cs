@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using StreamSharp.Core.Storage;
 
 namespace StreamSharp.Core;
 
@@ -9,8 +8,6 @@ public static class AddCoreExtensions
     {
         public IServiceCollection AddCore()
         {
-            services.AddScoped<LibraryRepository>();
-            services.AddScoped<LibraryItemRepository>();
             return services;
         }
     }

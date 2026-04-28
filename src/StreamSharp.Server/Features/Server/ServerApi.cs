@@ -6,7 +6,7 @@ public static class ServerApi
 {
     extension(WebApplication app)
     {
-        public async Task MapServerApi()
+        public void MapServerApi()
         {
             var group = app.MapGroup("/server").WithTags("Server Api");
 

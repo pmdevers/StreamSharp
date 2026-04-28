@@ -1,39 +1,25 @@
-﻿using StreamSharp.Core.Abstractions;
-using StreamSharp.Core.Events;
-
-namespace StreamSharp.Core.Entities;
+﻿namespace StreamSharp.Core.Entities;
 
 [GenerateId]
-public class LibraryItem : AggregateRoot<LibraryItemId>
+public class LibraryItem
 {
-    private readonly Dictionary<string, string> _libraryItems = [];
-    private LibraryItem(LibraryItemId id) : base(id) { }    
-    public LibraryId LibraryId { get; private set; } = LibraryId.Empty;
-
-    public string Path { get; private set; } = string.Empty;
-    public IReadOnlyDictionary<string, string> MetaData => _libraryItems;
+    public LibraryItemId Id { get; init; }
+    public LibraryId LibraryId { get; init; } = LibraryId.Empty;
+    public string Path { get; init; } = string.Empty;
+    public DateTimeOffset CreatedAt { get; init; }
+    public IReadOnlyDictionary<string, string> MetaData { get; set; } = new Dictionary<string, string>();
     
-    public static LibraryItem Create(Library library, string path)
+    public static LibraryItem Create(Library library, string path, TimeProvider? timeProvider = null)
     {
-        var item = new LibraryItem(LibraryItemId.New());
-        item.RecordEvent(new LibraryItemCreated(item.Id, library.Id, path));
+        var provider = timeProvider ?? TimeProvider.System;
+        var item = new LibraryItem ()
+        {
+            Id = LibraryItemId.New(),
+            LibraryId = library.Id,
+            Path = path,
+            CreatedAt = provider.GetUtcNow()
+        };
+        
         return item;
     }
-
-    public void AddMetaData(string name, string value)
-    {
-        RecordEvent(new LibraryItemMetaDataAdded(Id, name, value));
-    }
-
-    internal void Apply(LibraryItemCreated @event)
-    {
-        LibraryId = @event.LibraryId;
-        Path = @event.Path;
-    }
-
-    internal void Apply(LibraryItemMetaDataAdded @event)
-    {
-        _libraryItems[@event.Name] = @event.Value;
-    }
-
 }

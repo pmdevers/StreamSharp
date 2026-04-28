@@ -1,8 +1,7 @@
+using Microsoft.Extensions.FileProviders;
 using Scalar.AspNetCore;
-using StreamSharp.Core.Abstractions;
 using StreamSharp.Server.Configuration;
 using StreamSharp.Server.Features.Plugins;
-using StreamSharp.UI;
 
 namespace StreamSharp.Server;
 
@@ -123,7 +122,6 @@ public sealed class ServerHost(
 
                 builder.Services.AddSingleton(options);
                 builder.Services.AddEventBus();
-                builder.Services.AddSingleton(typeof(IEventStore<>), typeof(EventStreamStore<>));
                 builder.Services.AddSingleton(_pluginManager);
                 builder.Services.AddSingleton(this);
 
@@ -132,10 +130,9 @@ public sealed class ServerHost(
 
                 configure?.Invoke(builder);
 
-                var spaProvider = WebApp.CreateFileProvider();
-
                 app = builder.Build();
-
+                
+                var spaProvider = app.Services.GetRequiredService<IFileProvider>();
 
                 app.MapOpenApi();
                 app.MapScalarApiReference();

@@ -1,5 +1,6 @@
 ﻿using StreamSharp.Core.Abstractions;
+using StreamSharp.Core.Entities;
 
-namespace StreamSharp.Server.Features.Medialibrary.Events;
+namespace StreamSharp.Core.Events;
 
-public record LibraryCreated(string Name) : DomainEvent;
+public record LibraryCreated(LibraryId LibraryId, string Name, DateTime CreatedAt) : DomainEvent;
