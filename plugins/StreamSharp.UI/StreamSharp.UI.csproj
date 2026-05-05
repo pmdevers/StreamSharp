@@ -35,6 +35,6 @@
   </Target>
 
   <Target Name="StripPluginOutput" AfterTargets="Build">
-    <Exec Command="powershell -NoProfile -Command &quot;$allowed = (Get-Content '$(MSBuildProjectDirectory)\plugin.json' | ConvertFrom-Json).includedAssemblies + 'plugin.json'; Get-ChildItem '$(OutDir)' | Where-Object { -not $_.PSIsContainer -and ($allowed -notcontains $_.Name) } | Remove-Item -Force; Get-ChildItem '$(OutDir)' | Where-Object { $_.PSIsContainer } | Remove-Item -Recurse -Force&quot;" />
+    <Exec Command="pwsh -NoProfile -Command '$allowed = (Get-Content &quot;$(MSBuildProjectDirectory)/plugin.json&quot; | ConvertFrom-Json).includedAssemblies + &quot;plugin.json&quot;; Get-ChildItem &quot;$(OutDir)&quot; | Where-Object { -not $_.PSIsContainer -and ($allowed -notcontains $_.Name) } | Remove-Item -Force; Get-ChildItem &quot;$(OutDir)&quot; | Where-Object { $_.PSIsContainer } | Remove-Item -Recurse -Force'" />
   </Target>
 </Project>
