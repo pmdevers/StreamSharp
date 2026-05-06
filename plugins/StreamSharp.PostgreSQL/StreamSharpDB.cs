@@ -1,20 +1,52 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StreamSharp.Core.Abstractions;
 using StreamSharp.PostgreSQL.Aggregates;
+
 using static StreamSharp.Core.Queries.ILibraryQueries;
 
 namespace StreamSharp.PostgreSQL;
 
 public partial class StreamSharpDB(DbContextOptions<StreamSharpDB> options) : DbContext(options), IUnitOfWork
 {
+    private readonly List<Aggregate> _trackedAggregates = [];
+
     public DbSet<EventDocument> Events { get; set; }
     public DbSet<LibraryDto> Libraries { get; set; }
     public DbSet<LibraryItemDto> LibraryItems { get; set; }
 
-    public IRepository<TAggregate, TId> GetRepository<TAggregate, TId>()
-        where TAggregate : AggregateRoot<TId>
-        where TId : struct
-        => new AggregateRepository<TAggregate, TId>(this);
+    public IRepository<TAggregate> GetRepository<TAggregate>()
+        where TAggregate : Aggregate
+        => new AggregateRepository<TAggregate>(this);
+
+    internal void TrackAggregate(Aggregate aggregate)
+    {
+        _trackedAggregates.Add(aggregate);
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        foreach (var aggregate in _trackedAggregates)
+        {
+            var events = aggregate.GetUncommittedEvents();
+            var version = events.Version;
+            foreach (var evt in events)
+            {
+                var eventDoc = new EventDocument
+                {
+                    AggregateId = aggregate.Id,
+                    AggregateName = aggregate.GetType().Name,
+                    Data = EventSerializer.Serialize(evt),
+                    Type = EventSerializer.GetTypeName(evt),
+                    Version = version++,
+                    CreatedAt = evt.OccurredOn
+                };
+                Events.Add(eventDoc);
+            }
+        }
+        _trackedAggregates.Clear();
+
+        return await base.SaveChangesAsync(cancellationToken);
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -24,27 +56,12 @@ public partial class StreamSharpDB(DbContextOptions<StreamSharpDB> options) : Db
     }
 }
 
-public class AggregateRepository<TAggregate, TId>(StreamSharpDB context) : IRepository<TAggregate, TId>
-    where TAggregate : AggregateRoot<TId>
-    where TId : struct
+public class AggregateRepository<TAggregate>(StreamSharpDB context) : IRepository<TAggregate>
+    where TAggregate : Aggregate
 {
-    public async void Add(TAggregate entity)
+    public void Add(TAggregate entity)
     {
-        var version = 0;
-
-        foreach (var item in entity.GetUncommittedEvents())
-        {
-            version++;
-            context.Events.Add(new EventDocument
-            {
-                Id = Guid.NewGuid(),
-                AggregateId = entity.Id.ToString(),
-                Version = version,
-                Type = EventSerializer.GetTypeName(item),
-                Data = EventSerializer.Serialize(item),
-                CreatedAt = TimeProvider.System.GetUtcNow(),
-            });
-        }
+        context.TrackAggregate(entity);
     }
 
     public void Delete(TAggregate entity)
@@ -52,19 +69,20 @@ public class AggregateRepository<TAggregate, TId>(StreamSharpDB context) : IRepo
         // Event-sourced aggregates aren't typically deleted
     }
 
-    public async Task<TAggregate?> TryFindAsync(TId id, CancellationToken cancellationToken = default)
+    public async Task<TAggregate?> TryFindAsync(AggregateId id, CancellationToken cancellationToken = default)
     {
-        // Create a DbSet-backed event collection
-        var eventCollection = new DbSetEventCollection<TId>(id, context.Events);
+        var aggregateTypeName = typeof(TAggregate).Name;
+        var events = await context.Events
+            .Where(e => e.AggregateId.Equals(id) 
+                     && e.AggregateName == aggregateTypeName)
+            .Select(doc => EventSerializer.Deserialize(doc.Data, doc.Type))
+            .ToArrayAsync(cancellationToken);
 
-        // Load events from database
-        await eventCollection.LoadAsync(cancellationToken);
-
-        if (eventCollection.Count == 0)
+        if (events.Length == 0)
             return null;
 
-        // Create and hydrate aggregate
-        var aggregate = AggregateRoot.Create<TAggregate, TId>(id);
+        var eventCollection = EventCollection.Create(id, [.. events]);
+        var aggregate = AggregateRoot.Create<TAggregate>(id);
         aggregate.LoadFromHistory(eventCollection);
 
         return aggregate;

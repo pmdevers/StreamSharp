@@ -4,9 +4,9 @@ using StreamSharp.Core.Events;
 namespace StreamSharp.Core.Entities;
 
 [GenerateId]
-public class Library : AggregateRoot<LibraryId>
+public class Library : Aggregate    
 {
-    private Library(LibraryId id) : base(id)
+    private Library(AggregateId id) : base(id)
     {
     }
 
@@ -14,7 +14,7 @@ public class Library : AggregateRoot<LibraryId>
 
     public static Library Create(string name)
     {
-        var library = new Library(LibraryId.New());
+        var library = new Library(AggregateId.New());
         library.RecordEvent(new LibraryCreated(library.Id, name));
         return library;
     }

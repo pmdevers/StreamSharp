@@ -29,7 +29,7 @@ public class EventPublishingInterceptor : SaveChangesInterceptor
         _logger.LogDebug("SavingChanges interceptor called");
         if (eventData.Context != null)
         {
-            CaptureAddedEvents(eventData.Context);
+            CaptureAddedEventDocuments(eventData.Context);
         }
         return base.SavingChanges(eventData, result);
     }
@@ -42,7 +42,7 @@ public class EventPublishingInterceptor : SaveChangesInterceptor
         _logger.LogDebug("SavingChangesAsync interceptor called");
         if (eventData.Context != null)
         {
-            CaptureAddedEvents(eventData.Context);
+            CaptureAddedEventDocuments(eventData.Context);
         }
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
@@ -69,16 +69,17 @@ public class EventPublishingInterceptor : SaveChangesInterceptor
         return await base.SavedChangesAsync(eventData, result, cancellationToken);
     }
 
-    private void CaptureAddedEvents(DbContext context)
+    private void CaptureAddedEventDocuments(DbContext context)
     {
         _pendingEvents.Clear();
-        var entries = context.ChangeTracker.Entries<EventDocument>()
+        var entries = context.ChangeTracker
+            .Entries<EventDocument>()
             .Where(e => e.State == EntityState.Added)
             .Select(e => e.Entity)
             .ToList();
 
         _pendingEvents.AddRange(entries);
-        _logger.LogDebug("Captured {Count} event documents", entries.Count);
+        _logger.LogDebug("Captured {Count} event documents to publish", entries.Count);
     }
 
     private async Task PublishEventsAsync(CancellationToken cancellationToken)

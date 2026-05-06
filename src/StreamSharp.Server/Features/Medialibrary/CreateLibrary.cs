@@ -14,7 +14,7 @@ public static class CreateLibrary
         [FromBody] CreateLibraryRequest request,
         CancellationToken cancellationToken)
     {
-        var repo = uow.GetRepository<Library, LibraryId>();
+        var repo = uow.GetRepository<Library>();
 
         var library = Library.Create(request.Name);
 

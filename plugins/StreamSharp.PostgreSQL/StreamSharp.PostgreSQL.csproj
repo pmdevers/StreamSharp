@@ -34,8 +34,4 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
-  <Target Name="StripPluginOutput" AfterTargets="Build" Condition="'$(EFMigrations)' != 'true'">
-    <Exec Command="pwsh -NoProfile -Command '$allowed = (Get-Content &quot;$(MSBuildProjectDirectory)/plugin.json&quot; | ConvertFrom-Json).includedAssemblies + &quot;plugin.json&quot;; Get-ChildItem &quot;$(OutDir)&quot; | Where-Object { -not $_.PSIsContainer -and ($allowed -notcontains $_.Name) } | Remove-Item -Force; Get-ChildItem &quot;$(OutDir)&quot; | Where-Object { $_.PSIsContainer } | Remove-Item -Recurse -Force'" />
-  </Target>
-
 </Project>

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using StreamSharp.Core.Entities;
+using StreamSharp.Core.Abstractions;
 using static StreamSharp.Core.Queries.ILibraryQueries;
 
 namespace StreamSharp.PostgreSQL.Aggregates;
@@ -10,9 +10,9 @@ internal class LibraryConfiguration : IEntityTypeConfiguration<LibraryDto>
 {
     public void Configure(EntityTypeBuilder<LibraryDto> builder)
     {
-        var converter = new ValueConverter<LibraryId, Guid>(
-            id => id.Value,
-            value => new LibraryId(value));
+        var converter = new ValueConverter<AggregateId, Guid>(
+            id => (Guid)id,
+            value => AggregateId.From(value));
 
         builder.ToTable("Libraries");
         builder.HasKey(x => x.Id);

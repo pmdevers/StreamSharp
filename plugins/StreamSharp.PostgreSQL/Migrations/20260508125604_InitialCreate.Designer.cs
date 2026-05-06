@@ -12,8 +12,8 @@ using StreamSharp.PostgreSQL;
 namespace StreamSharp.PostgreSQL.Migrations
 {
     [DbContext(typeof(StreamSharpDB))]
-    [Migration("20260503133457_AddReadModelTables")]
-    partial class AddReadModelTables
+    [Migration("20260508125604_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -72,11 +72,14 @@ namespace StreamSharp.PostgreSQL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("AggregateId")
+                    b.Property<Guid>("AggregateId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AggregateName")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Data")

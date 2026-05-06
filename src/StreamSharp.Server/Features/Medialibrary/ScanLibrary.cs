@@ -8,12 +8,12 @@ public static class ScanLibrary
 {
     public static async Task<IResult> Handle(
         [FromServices] IUnitOfWork unitOfWork,
-        LibraryId libraryId,
+        AggregateId libraryId,
         CancellationToken cancellationToken)
     {
 
-        var repository = unitOfWork.GetRepository<Library, LibraryId>();
-        var repositoryItem = unitOfWork.GetRepository<LibraryItem, LibraryItemId>();
+        var repository = unitOfWork.GetRepository<Library>();
+        var repositoryItem = unitOfWork.GetRepository<LibraryItem>();
         
         var libary = await repository.TryFindAsync(libraryId, cancellationToken);
 

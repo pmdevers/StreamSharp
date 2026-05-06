@@ -1,0 +1,30 @@
+<Project>
+  <Target Name="StripPluginOutput" AfterTargets="Build" Condition="Exists('$(MSBuildProjectDirectory)/plugin.json') and '$(EFMigrations)' != 'true' and '$(DisableStripPluginOutput)' != 'true'">
+    <PropertyGroup>
+      <_PluginOutputRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\$(OutDir)'))</_PluginOutputRoot>
+    </PropertyGroup>
+
+    <ReadLinesFromFile File="$(MSBuildProjectDirectory)/plugin.json">
+      <Output TaskParameter="Lines" ItemName="_PluginJsonLine" />
+    </ReadLinesFromFile>
+
+    <ItemGroup>
+      <_PluginOutputKeepFile Include="plugin.json" />
+      <_PluginOutputKeepFile
+        Include="$([System.Text.RegularExpressions.Regex]::Match('%(_PluginJsonLine.Identity)', '&quot;([A-Za-z0-9_.-]+\.[A-Za-z][A-Za-z0-9]*)&quot;').Groups[1].Value)"
+        Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(_PluginJsonLine.Identity)', '&quot;([A-Za-z0-9_.-]+\.[A-Za-z][A-Za-z0-9]*)&quot;'))" />
+
+      <_PluginOutputFiles Include="$(_PluginOutputRoot)**\*" Condition="!$([System.IO.Directory]::Exists('%(Identity)'))" />
+      <_PluginOutputFilesToDelete Include="@(_PluginOutputFiles)" Exclude="@(_PluginOutputKeepFile->'$(_PluginOutputRoot)%(Identity)')" />
+    </ItemGroup>
+
+    <Delete Files="@(_PluginOutputFilesToDelete)" />
+
+    <ItemGroup>
+      <_PluginOutputDirectoriesRaw Include="@(_PluginOutputFilesToDelete->'%(RootDir)%(Directory)')" />
+      <_PluginOutputDirectories Include="@(_PluginOutputDirectoriesRaw)" Condition="'%(Identity)' != '$(_PluginOutputRoot)'" />
+    </ItemGroup>
+
+    <RemoveDir Directories="@(_PluginOutputDirectories)" />
+  </Target>
+</Project>

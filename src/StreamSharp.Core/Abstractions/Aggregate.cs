@@ -13,40 +13,40 @@ public static class AggregateRoot
     /// <param name="aggregateId"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException">Throw an exception if the method is not implemented.</exception>
-    public static TAggregate Create<TAggregate, TId>(TId aggregateId)
-        where TAggregate : AggregateRoot<TId>
-        where TId : struct
+    public static TAggregate Create<TAggregate>(AggregateId aggregateId)
+        where TAggregate : Aggregate
     {
         var methodName = "Create";
         var type = typeof(TAggregate);
-        var method = type.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static, new[] { typeof(TId) });
+        var method = type.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static, [typeof(AggregateId)]);
 
         if (method == null)
         {
-            var constructor = type.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public, new[] { typeof(TId) });
-
+#pragma warning disable S3011 // Reflection should not be used to increase accessibility of classes, methods, or fields
+            var constructor = type.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public, [typeof(AggregateId)]);
+#pragma warning restore S3011 // Reflection should not be used to increase accessibility of classes, methods, or fields
             if (constructor == null)
             {
                 try
                 {
                     return Activator.CreateInstance<TAggregate>();
                 }
-                catch (MissingMethodException e)
+                catch (MissingMethodException)
                 {
                     // catch if parameterles constructor is not found.
                 }
             }
 
-            var result = constructor?.Invoke(new object[] { aggregateId });
+            var result = constructor?.Invoke([aggregateId]);
             if (result is TAggregate returnValue) return returnValue;
         }
         else
         {
-            var result = method.Invoke(null, new object[] { aggregateId });
+            var result = method.Invoke(null, [aggregateId]);
             if (result is TAggregate returnValue) return returnValue;
         }
 
-        throw new NotImplementedException($"The aggregate does not have a public static method 'public static {type.Name} {methodName}({typeof(TId).Name} id)'.");
+        throw new NotImplementedException($"The aggregate does not have a public static method 'public static {type.Name} {methodName}({typeof(AggregateId).Name} id)'.");
     }
 
     /// <summary>
@@ -56,11 +56,10 @@ public static class AggregateRoot
     /// <typeparam name="TId"></typeparam>
     /// <param name="events">The stream of events.</param>
     /// <returns>A instance of <typeparamref name="TAggregate"/>.</returns>
-    public static TAggregate LoadFromHistory<TAggregate, TId>(EventCollection<TId> events)
-        where TAggregate : AggregateRoot<TId>
-        where TId : struct
+    public static TAggregate LoadFromHistory<TAggregate>(EventCollection events)
+        where TAggregate : Aggregate
     {
-        var aggregate = Create<TAggregate, TId>(events.AggregateId);
+        var aggregate = Create<TAggregate>(events.AggregateId);
         aggregate.LoadFromHistory(events);
         return aggregate;
     }
@@ -70,15 +69,19 @@ public static class AggregateRoot
 /// Base class for an AggregateRoot.
 /// </summary>
 /// <typeparam name="TId">The type of the Identifier of the aggregate.</typeparam>
-public abstract class AggregateRoot<TId>
-    where TId : struct
+/// <remarks>
+/// Constructor to instanciate a new instance. />.
+/// </remarks>
+/// <param name="id">The identifier.</param>
+[GenerateId]
+public abstract class Aggregate(AggregateId id, TimeProvider? timeProvider = null)
 {
-    private IEventCollection<TId> _events;
+    private EventCollection _events = EventCollection.Create(id);
 
     /// <summary>
     /// The identifier of this aggregate.
     /// </summary>
-    public TId Id => _events.AggregateId;
+    public AggregateId Id => _events.AggregateId;
 
     /// <summary>
     /// The version of the aggregate root.
@@ -100,23 +103,13 @@ public abstract class AggregateRoot<TId>
     /// </summary>
     public DateTimeOffset? LastModifiedOn => _events.LastModifiedOn;
 
-    protected TimeProvider TimeProvider { get; }
-
-    /// <summary>
-    /// Constructor to instanciate a new instance. />.
-    /// </summary>
-    /// <param name="id">The identifier.</param>
-    protected AggregateRoot(TId id, TimeProvider? timeProvider = null)
-    {
-        TimeProvider = timeProvider ?? TimeProvider.System;
-        _events = EventCollection<TId>.Create(id);
-    }
+    protected TimeProvider TimeProvider { get; } = timeProvider ?? TimeProvider.System;
 
     /// <summary>
     /// Refresh aggregate from an event stream. 
     /// </summary>
     /// <param name="events">a event collection.</param>
-    public void LoadFromHistory(IEventCollection<TId> events)
+    public void LoadFromHistory(EventCollection events)
     {
         _events = events;
         foreach (var e in _events)
@@ -125,7 +118,7 @@ public abstract class AggregateRoot<TId>
         }
     }
 
-    public IEventCollection<TId> GetUncommittedEvents()
+    public EventCollection GetUncommittedEvents()
         => _events.GetUncommittedEvents();
 
     /// <summary>
@@ -150,12 +143,14 @@ public abstract class AggregateRoot<TId>
     private const string _applyMehodName = "Apply";
     private void ApplyInternal(DomainEvent e)
     {
-        AggregateRoot<TId>.SafeInvokeMethod(GetType(), this, _applyMehodName, e);
+        Aggregate.SafeInvokeMethod(GetType(), this, _applyMehodName, e);
     }
 
     private static void SafeInvokeMethod(Type type, object target, string name, params object[] args)
     {
+#pragma warning disable S3011 // Reflection should not be used to increase accessibility of classes, methods, or fields
         const BindingFlags privateOrPublicMethodFlags = BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
+#pragma warning restore S3011 // Reflection should not be used to increase accessibility of classes, methods, or fields
         try
         {
             type.InvokeMember(name, privateOrPublicMethodFlags, null, target, args);
@@ -164,7 +159,7 @@ public abstract class AggregateRoot<TId>
         {
             if (type.BaseType != null)
             {
-                AggregateRoot<TId>.SafeInvokeMethod(type.BaseType, target, name, args);
+                Aggregate.SafeInvokeMethod(type.BaseType, target, name, args);
             }
         }
     }
@@ -174,33 +169,16 @@ public abstract class AggregateRoot<TId>
 /// <summary>
 /// A Append only EventCollection
 /// </summary>
-public static class EventCollection
-{
-    /// <summary>
-    /// Creates an instance of an EventCollection
-    /// </summary>
-    /// <param name="aggregateId">The id of the aggregate</param>
-    /// <param name="events">Array of events</param>
-    /// <returns>Returns an event collection </returns>
-    public static EventCollection<TId> Create<TId>(TId aggregateId, DomainEvent[]? events = null)
-        where TId : struct
-        => EventCollection<TId>.Create(aggregateId, events);
-}
-
-/// <summary>
-/// A Append only EventCollection
-/// </summary>
 /// <typeparam name="TId">The Type of the aggregateId</typeparam>
-public sealed class EventCollection<TId> : IEventCollection<TId>
-    where TId : struct
+public sealed class EventCollection : IEnumerable<DomainEvent>
 {
-    private DomainEvent[] _events = Array.Empty<DomainEvent>();
-    private readonly List<DomainEvent> _uncomitted = new();
+    private DomainEvent[] _events = [];
+    private readonly List<DomainEvent> _uncomitted = [];
 
     /// <summary>
     /// The Id of the aggregate
     /// </summary>
-    public TId AggregateId { get; }
+    public AggregateId AggregateId { get; }
     /// <summary>
     /// The version of the aggregate
     /// </summary>
@@ -240,10 +218,10 @@ public sealed class EventCollection<TId> : IEventCollection<TId>
     /// <param name="aggregateId">The id of the aggregate</param>
     /// <param name="events">Array of events</param>
     /// <returns>Returns an event collection </returns>
-    internal static EventCollection<TId> Create(TId aggregateId, DomainEvent[]? events = null)
+    public static EventCollection Create(AggregateId aggregateId, DomainEvent[]? events = null)
         => new(aggregateId)
         {
-            _events = events ?? Array.Empty<DomainEvent>(),
+            _events = events ?? [],
         };
 
     /// <summary>
@@ -259,8 +237,8 @@ public sealed class EventCollection<TId> : IEventCollection<TId>
     /// Get the uncommitted events
     /// </summary>
     /// <returns>Events that are uncommitted.</returns>
-    public IEventCollection<TId> GetUncommittedEvents()
-        => Create(AggregateId, _uncomitted.ToArray());
+    public EventCollection GetUncommittedEvents()
+        => Create(AggregateId, [.. _uncomitted]);
 
     /// <summary>
     /// Iterates over the comitted events
@@ -276,7 +254,7 @@ public sealed class EventCollection<TId> : IEventCollection<TId>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         => GetEnumerator();
 
-    private EventCollection(TId aggregateId)
+    private EventCollection(AggregateId aggregateId)
     {
         AggregateId = aggregateId;
     }

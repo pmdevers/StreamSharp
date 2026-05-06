@@ -3,6 +3,8 @@ using System.Text.Json;
 
 namespace StreamSharp.PostgreSQL;
 
+public record UnkownEvent(string TypeName, string Json) : DomainEvent;
+
 /// <summary>
 /// Handles serialization and deserialization of domain events
 /// </summary>
@@ -19,13 +21,14 @@ public static class EventSerializer
     /// <summary>
     /// Deserialize a domain event from JSON using the specified type name
     /// </summary>
-    public static DomainEvent? Deserialize(string json, string typeName)
+    public static DomainEvent Deserialize(string json, string typeName)
     {
         var type = ResolveType(typeName);
         if (type == null)
-            return null;
+            return new UnkownEvent(typeName, json);
 
-        return JsonSerializer.Deserialize(json, type) as DomainEvent;
+        var result = JsonSerializer.Deserialize(json, type) as DomainEvent;
+        return result ?? new UnkownEvent(typeName, json);
     }
 
     /// <summary>
