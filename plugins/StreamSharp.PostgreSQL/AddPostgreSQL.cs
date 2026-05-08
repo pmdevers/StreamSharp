@@ -25,6 +25,7 @@ public static class AddPostgreSQLExtensions
         });
 
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<StreamSharpDB>());
+        services.AddScoped<IEventStore>(provider => provider.GetRequiredService<StreamSharpDB>());
         services.AddScoped<ILibraryQueries, LibraryQueries>();
 
         services.AddMessageHandler<LibraryProjector>();

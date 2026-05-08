@@ -12,7 +12,7 @@ using StreamSharp.PostgreSQL;
 namespace StreamSharp.PostgreSQL.Migrations
 {
     [DbContext(typeof(StreamSharpDB))]
-    [Migration("20260508125604_InitialCreate")]
+    [Migration("20260508191612_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -94,6 +94,10 @@ namespace StreamSharp.PostgreSQL.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AggregateId", "AggregateName", "Version")
+                        .IsUnique()
+                        .HasDatabaseName("IX_EventDocument_AggregateId_AggregateName_Version");
 
                     b.ToTable("EventDocument", (string)null);
                 });

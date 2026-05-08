@@ -26,14 +26,66 @@ dotnet test                                     # run all tests (TUnit)
 The Vue frontend is built automatically by MSBuild (`bun install && bun run build` in `StreamSharp.UI/`). You need [Bun](https://bun.sh) installed.
 
 ```bash
-# Frontend only (from src/StreamSharp.UI/)
+# Frontend only (from plugins/StreamSharp.UI/)
 bun run dev          # dev server
 bun run build        # production build
 bun run test:unit    # Vitest unit tests
 bun run lint         # ESLint
 ```
 
+For detailed UI development guidance, see [docs/plugins/UI/DEVELOPMENT.md](docs/plugins/UI/DEVELOPMENT.md).
+
 NuGet packages use Central Package Management (`Directory.Packages.props`) with committed lock files.
+
+## Database Migrations
+
+### Adding a New Migration
+
+**IMPORTANT**: Always use this two-step process to preserve migration files:
+
+```powershell
+# Step 1: Build PostgreSQL plugin with DisableStripPluginOutput=true
+# This ensures the Migrations folder is preserved in the build output
+dotnet build plugins\StreamSharp.PostgreSQL\StreamSharp.PostgreSQL.csproj `
+  -c Debug `
+  -p:DisableStripPluginOutput=true
+
+# Step 2: Create migration without rebuilding
+# The --no-build flag prevents the default build that strips migration files
+dotnie ef migrations add <MigrationName> `
+  -p plugins\StreamSharp.PostgreSQL\StreamSharp.PostgreSQL.csproj `
+  --no-build
+```
+
+### Why This Process?
+
+- **DisableStripPluginOutput=true**: By default, `plugins\Directory.Build.targets` removes non-essential files. This flag preserves the `Migrations` folder and all migration files.
+- **--no-build flag**: Prevents EF CLI from rebuilding with default settings (which would strip migrations). Uses already-built assemblies instead.
+
+### Migration File Structure
+
+```
+plugins\StreamSharp.PostgreSQL\Migrations\
+├── 20260509000000_InitialCreate.cs              # Migration logic (Up/Down)
+├── 20260509000000_InitialCreate.Designer.cs     # Migration metadata
+└── StreamSharpDBModelSnapshot.cs                # Current EF Core model state
+```
+
+### Applying Migrations
+
+Migrations are automatically applied on startup via `MigrationService` (see `plugins\StreamSharp.PostgreSQL\AddPostgreSQL.cs`).
+
+To manually apply:
+```powershell
+dotnet ef database update -p plugins\StreamSharp.PostgreSQL\StreamSharp.PostgreSQL.csproj
+```
+
+### Important Notes
+
+- Always commit migration files to git after creation
+- The `StreamSharpDBModelSnapshot.cs` file represents the current model state and is auto-updated
+- EventDocument table has a unique constraint on (AggregateId, AggregateName, Version)
+- For comprehensive PostgreSQL plugin documentation, see [docs/plugins/PostgreSQL/README.md](docs/plugins/PostgreSQL/README.md) and [docs/plugins/PostgreSQL/MIGRATIONS.md](docs/plugins/PostgreSQL/MIGRATIONS.md)
 
 ## Architecture
 
@@ -58,7 +110,14 @@ public static class MyFeatureApi
 
 ### Strongly-Typed IDs
 
-Every aggregate and `EventStream` is decorated with `[GenerateId]`. The source generator emits a value-object `struct` (e.g. `LibraryId`) with `New()` and `Empty` members. Always use the generated Id type — never raw `Guid` or `string` for entity identity.
+Every aggregate and `EventStream` is decorated with `[GenerateId]`. The source generator emits a value-object `struct` (e.g. `LibraryId`) with:
+- Private constructor (prevents direct instantiation)
+- `New()` factory method (for creating new IDs with `Guid.NewGuid()`)
+- `From(Guid)` factory method (for converting from existing Guid)
+- Implicit conversion to underlying `Guid` type
+- No public `Value` property — use implicit casting instead
+
+Always use the generated Id type — never raw `Guid` or `string` for entity identity.
 
 ### Plugin System
 
@@ -67,6 +126,8 @@ Plugins are loaded from a configurable `PluginsRoot` directory via `PluginManage
 ### EventBus
 
 Channel-based (`Channel.CreateUnbounded<DomainEvent>`). `EventBus` enqueues; `EventBusBackgroundService` dequeues and dispatches to registered `DomainEventHandler<T>` delegates. Handlers can be lambdas or convention-based classes with `Task Method(T event, CancellationToken ct)` methods.
+
+Only registers services if `IEventBus` isn't already registered (uses conditional check in `AddEventBus()`).
 
 ## Conventions
 
@@ -87,6 +148,13 @@ Tests use **TUnit** (not xUnit or NUnit). The test project is `test/StreamSharp.
 
 - [docs/introduction.md](docs/introduction.md) — project overview
 - [docs/getting-started.md](docs/getting-started.md) — setup guide
+- [docs/plugins/README.md](docs/plugins/README.md) — plugin documentation hub
+- [docs/plugins/PostgreSQL/README.md](docs/plugins/PostgreSQL/README.md) — PostgreSQL plugin guide
+- [docs/plugins/PostgreSQL/MIGRATIONS.md](docs/plugins/PostgreSQL/MIGRATIONS.md) — database migration workflow
+- [docs/plugins/PostgreSQL/ARCHITECTURE.md](docs/plugins/PostgreSQL/ARCHITECTURE.md) — plugin architecture deep-dive
+- [docs/plugins/UI/README.md](docs/plugins/UI/README.md) — UI plugin overview & architecture
+- [docs/plugins/UI/DEVELOPMENT.md](docs/plugins/UI/DEVELOPMENT.md) — UI development guide & tutorials
 - [Directory.Packages.props](Directory.Packages.props) — all NuGet version pins
 - [src/Directory.Build.props](src/Directory.Build.props) — shared MSBuild config
-- [src/StreamSharp.UI/AGENTS.md](src/StreamSharp.UI/AGENTS.md) — frontend-specific guidelines
+- [src/StreamSharp.UI/AGENTS.md](src/StreamSharp.UI/AGENTS.md) — frontend-specific guidelines (legacy)
+- [agents.md](agents.md) — this file

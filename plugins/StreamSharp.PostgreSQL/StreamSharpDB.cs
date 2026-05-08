@@ -6,7 +6,7 @@ using static StreamSharp.Core.Queries.ILibraryQueries;
 
 namespace StreamSharp.PostgreSQL;
 
-public partial class StreamSharpDB(DbContextOptions<StreamSharpDB> options) : DbContext(options), IUnitOfWork
+public partial class StreamSharpDB(DbContextOptions<StreamSharpDB> options) : DbContext(options), IUnitOfWork, IEventStore
 {
     private readonly List<Aggregate> _trackedAggregates = [];
 
@@ -53,6 +53,20 @@ public partial class StreamSharpDB(DbContextOptions<StreamSharpDB> options) : Db
         modelBuilder.ApplyConfiguration(new EventDocumentConfiguration());
         modelBuilder.ApplyConfiguration(new LibraryConfiguration());
         modelBuilder.ApplyConfiguration(new LibraryItemConfiguration());
+    }
+
+    public async Task<IReadOnlyList<DomainEvent>> GetAllEventsAsync(CancellationToken cancellationToken = default)
+    {
+        var eventDocuments = await Events
+            .OrderBy(e => e.CreatedAt)
+            .ToListAsync(cancellationToken);
+
+        var events = eventDocuments
+            .Select(doc => EventSerializer.Deserialize(doc.Data, doc.Type))
+            .Where(e => e != null)
+            .ToList();
+
+        return events.AsReadOnly();
     }
 }
 

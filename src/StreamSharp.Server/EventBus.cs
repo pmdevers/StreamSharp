@@ -7,15 +7,12 @@ public static class EventBusExtensions
 {
     extension(IServiceCollection services)
     {
-
         public IServiceCollection AddEventBus()
-        {
-            services.AddSingleton<MessageQueue>();
-            services.AddSingleton<IEventBus, EventBus>();
-            services.AddHostedService<EventBusBackgroundService>();
-
-            return services;
-        }
+            => services.AddWhenNotRegisterd<IEventBus>(s => {
+                s.AddSingleton<MessageQueue>();
+                s.AddSingleton<IEventBus, EventBus>();
+                s.AddSingleton<IHostedService, EventBusBackgroundService>();
+            });
     }
 }
 

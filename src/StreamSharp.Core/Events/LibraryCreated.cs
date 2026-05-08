@@ -1,5 +1,6 @@
 ﻿using StreamSharp.Core.Abstractions;
+using StreamSharp.Core.Entities;
 
 namespace StreamSharp.Core.Events;
 
-public record LibraryCreated(AggregateId LibraryId, string Name) : DomainEvent;
+public record LibraryCreated(LibraryId LibraryId, string Name) : DomainEvent;

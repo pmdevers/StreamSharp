@@ -1,4 +1,5 @@
-﻿using StreamSharp.Server.Features.Medialibrary;
+﻿using StreamSharp.Server.Features.Events;
+using StreamSharp.Server.Features.Medialibrary;
 using StreamSharp.Server.Features.Plugins;
 using StreamSharp.Server.Features.Server;
 
@@ -15,6 +16,7 @@ public static class StreamSharpApi
             group.MapMedialibraryApi();
             group.MapPluginsApi();
             group.MapServerApi();
+            group.MapEventsApi();
         }
     }
 }

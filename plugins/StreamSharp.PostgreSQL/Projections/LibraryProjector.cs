@@ -1,4 +1,5 @@
-﻿using StreamSharp.Core.Entities;
+﻿using StreamSharp.Core.Abstractions;
+using StreamSharp.Core.Entities;
 using StreamSharp.Core.Events;
 using static StreamSharp.Core.Queries.ILibraryQueries;
 

@@ -23,19 +23,30 @@ internal class EventDocumentConfiguration : IEntityTypeConfiguration<EventDocume
     {
 
         var converter = new ValueConverter<AggregateId, Guid>(
-           id => id.Value,
+           id =>  (Guid)id,
            value => AggregateId.From(value));
 
         builder.ToTable(nameof(EventDocument));
 
         builder.HasKey(e => e.Id);
+        
+        // Create unique constraint on AggregateId, AggregateName, and Version
+        builder.HasIndex(e => new { e.AggregateId, e.AggregateName, e.Version })
+            .IsUnique()
+            .HasDatabaseName("IX_EventDocument_AggregateId_AggregateName_Version");
+        
         builder.Property(e => e.AggregateId)
             .HasConversion(converter)
             .IsRequired();
+
         builder.Property(e => e.AggregateName).IsRequired();
+        
         builder.Property(e => e.Version).IsRequired();
+        
         builder.Property(e => e.Type).IsRequired();
         builder.Property(e => e.Data).IsRequired();
         builder.Property(e => e.CreatedAt).IsRequired();
+
+
     }
 }

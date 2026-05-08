@@ -1,5 +1,4 @@
-﻿using StreamSharp.Core.Entities;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace StreamSharp.Core.Abstractions;
 

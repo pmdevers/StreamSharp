@@ -2,3 +2,18 @@
   href: introduction.md
 - name: Getting Started
   href: getting-started.md
+- name: Plugins
+  href: plugins/README.md
+  items:
+    - name: PostgreSQL Plugin
+      href: plugins/PostgreSQL/README.md
+      items:
+        - name: Migrations Guide
+          href: plugins/PostgreSQL/MIGRATIONS.md
+        - name: Architecture Deep-Dive
+          href: plugins/PostgreSQL/ARCHITECTURE.md
+    - name: UI Plugin
+      href: plugins/UI/README.md
+      items:
+        - name: Development Guide
+          href: plugins/UI/DEVELOPMENT.md

@@ -15,7 +15,8 @@ public class Library : Aggregate
     public static Library Create(string name)
     {
         var library = new Library(AggregateId.New());
-        library.RecordEvent(new LibraryCreated(library.Id, name));
+
+        library.RecordEvent(new LibraryCreated(LibraryId.From(library.Id), name));
         return library;
     }
 

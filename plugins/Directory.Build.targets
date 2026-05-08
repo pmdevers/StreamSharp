@@ -1,5 +1,5 @@
 <Project>
-  <Target Name="StripPluginOutput" AfterTargets="Build" Condition="Exists('$(MSBuildProjectDirectory)/plugin.json') and '$(EFMigrations)' != 'true' and '$(DisableStripPluginOutput)' != 'true'">
+  <Target Name="StripPluginOutput" AfterTargets="Build" Condition="Exists('$(MSBuildProjectDirectory)/plugin.json') and '$(DisableStripPluginOutput)' != 'true'">
     <PropertyGroup>
       <_PluginOutputRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\$(OutDir)'))</_PluginOutputRoot>
     </PropertyGroup>

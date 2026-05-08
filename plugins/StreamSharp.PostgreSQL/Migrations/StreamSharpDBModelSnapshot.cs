@@ -92,6 +92,10 @@ namespace StreamSharp.PostgreSQL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AggregateId", "AggregateName", "Version")
+                        .IsUnique()
+                        .HasDatabaseName("IX_EventDocument_AggregateId_AggregateName_Version");
+
                     b.ToTable("EventDocument", (string)null);
                 });
 #pragma warning restore 612, 618

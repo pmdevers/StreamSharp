@@ -6,14 +6,14 @@ namespace {{ namespace }}
 {
 {{~ end ~}}
     [System.Runtime.CompilerServices.CompilerGenerated]
-    [System.Text.Json.Serialization.JsonConverter(typeof({{ type_name }}JsonConverter))]
+    [System.Text.Json.Serialization.JsonConverter(typeof({{ type_name }}.JsonConverter))]
     public {{ keyword }} {{ type_name }} : System.IEquatable<{{ type_name }}>, System.IComparable<{{ type_name }}>
     {
-        public {{ underlying_type }} Value { get; }
+        private readonly {{ underlying_type }} _value;
 
-        public {{ type_name }}({{ underlying_type }} value)
+        private {{ type_name }}({{ underlying_type }} value)
         {
-            Value = value;
+            _value = value;
         }
 
 {{~ if is_guid ~}}
@@ -23,16 +23,16 @@ namespace {{ namespace }}
 {{~ end ~}}
         public static {{ type_name }} From({{ underlying_type }} value) => new {{ type_name }}(value);
 
-        public bool Equals({{ type_name }} other) => Value.Equals(other.Value);
+        public bool Equals({{ type_name }} other) => _value.Equals(other._value);
         public override bool Equals(object? obj) => obj is {{ type_name }} other && Equals(other);
-        public override int GetHashCode() => Value.GetHashCode();
-        public override string ToString() => Value.ToString();
-        public int CompareTo({{ type_name }} other) => Value.CompareTo(other.Value);
+        public override int GetHashCode() => _value.GetHashCode();
+        public override string ToString() => _value.ToString();
+        public int CompareTo({{ type_name }} other) => _value.CompareTo(other._value);
 
         public static bool operator ==({{ type_name }} left, {{ type_name }} right) => left.Equals(right);
         public static bool operator !=({{ type_name }} left, {{ type_name }} right) => !left.Equals(right);
 
-        public static implicit operator {{ underlying_type }}({{ type_name }} id) => id.Value;
+        public static implicit operator {{ underlying_type }}({{ type_name }} id) => id._value;
         public static explicit operator {{ type_name }}({{ underlying_type }} value) => new {{ type_name }}(value);
 
 #if NET6_0_OR_GREATER
@@ -48,40 +48,41 @@ namespace {{ namespace }}
             return false;
         }
 #endif
-    }
 
-    [System.Runtime.CompilerServices.CompilerGenerated]
-    internal sealed class {{ type_name }}JsonConverter : System.Text.Json.Serialization.JsonConverter<{{ type_name }}>
-    {
-        public override {{ type_name }} Read(ref System.Text.Json.Utf8JsonReader reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
+        [System.Runtime.CompilerServices.CompilerGenerated]
+        internal sealed class JsonConverter : System.Text.Json.Serialization.JsonConverter<{{ type_name }}>
         {
-{{~ if is_guid ~}}
-            if (reader.TokenType == System.Text.Json.JsonTokenType.String)
+            public override {{ type_name }} Read(ref System.Text.Json.Utf8JsonReader reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
             {
-                var guidString = reader.GetString();
-                if (System.Guid.TryParse(guidString, out var guid))
-                {
-                    return new {{ type_name }}(guid);
-                }
-            }
-            throw new System.Text.Json.JsonException($"Unable to convert \"{reader.GetString()}\" to {{ type_name }}");
-{{~ end ~}}
-{{~ if is_not_guid ~}}
-            var value = System.Text.Json.JsonSerializer.Deserialize<{{ underlying_type }}>(ref reader, options);
-            return new {{ type_name }}(value);
-{{~ end ~}}
-        }
-
-        public override void Write(System.Text.Json.Utf8JsonWriter writer, {{ type_name }} value, System.Text.Json.JsonSerializerOptions options)
-        {
 {{~ if is_guid ~}}
-            writer.WriteStringValue(value.Value.ToString());
+                if (reader.TokenType == System.Text.Json.JsonTokenType.String)
+                {
+                    var guidString = reader.GetString();
+                    if (System.Guid.TryParse(guidString, out var guid))
+                    {
+                        return new {{ type_name }}(guid);
+                    }
+                }
+                throw new System.Text.Json.JsonException($"Unable to convert \"{reader.GetString()}\" to {{ type_name }}");
 {{~ end ~}}
 {{~ if is_not_guid ~}}
-            System.Text.Json.JsonSerializer.Serialize(writer, value.Value, options);
+                var value = System.Text.Json.JsonSerializer.Deserialize<{{ underlying_type }}>(ref reader, options);
+                return new {{ type_name }}(value);
 {{~ end ~}}
+            }
+
+            public override void Write(System.Text.Json.Utf8JsonWriter writer, {{ type_name }} value, System.Text.Json.JsonSerializerOptions options)
+            {
+{{~ if is_guid ~}}
+                writer.WriteStringValue((({{ underlying_type }})value).ToString());
+{{~ end ~}}
+{{~ if is_not_guid ~}}
+                System.Text.Json.JsonSerializer.Serialize(writer, ({{ underlying_type }})value, options);
+{{~ end ~}}
+            }
         }
     }
+
 {{~ if namespace ~}}
 }
 {{~ end ~}}

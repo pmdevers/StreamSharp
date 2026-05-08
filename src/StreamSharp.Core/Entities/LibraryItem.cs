@@ -12,14 +12,17 @@ public class LibraryItem : Aggregate
     {
     }
 
-    public AggregateId LibraryId { get; private set; } = AggregateId.Empty;
+    public LibraryId LibraryId { get; private set; } = LibraryId.From(Guid.Empty);
     public string Path { get; private set; } = string.Empty;
     public IReadOnlyDictionary<string, string> MetaData => _metadata.AsReadOnly();
     
     public static LibraryItem Create(Library library, string path)
     {
         var item = new LibraryItem(AggregateId.New());
-        item.RecordEvent(new LibraryItemCreated(item.Id, library.Id, path));
+        item.RecordEvent(new LibraryItemCreated(
+            LibraryItemId.From(item.Id),
+            LibraryId.From(library.Id),
+            path));
         return item;
     }
 

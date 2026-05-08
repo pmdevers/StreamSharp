@@ -9,7 +9,7 @@ public static class GetLibraryById
 {
     public static async Task<IResult> Handle(
         [FromServices] ILibraryQueries libraryQueries,
-        [FromRoute] AggregateId libraryId,
+        [FromRoute] LibraryId libraryId,
         CancellationToken cancellationToken)
     {
         var library = await libraryQueries.GetLibraryByIdAsync(libraryId, cancellationToken);

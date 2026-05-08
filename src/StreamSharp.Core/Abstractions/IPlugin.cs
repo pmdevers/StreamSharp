@@ -1,4 +1,6 @@
-﻿namespace StreamSharp.Core.Abstractions;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace StreamSharp.Core.Abstractions;
 
 public interface IPlugin
 {
@@ -7,4 +9,21 @@ public interface IPlugin
 
     void Start(IPluginContext context);
     void Stop();
+}
+
+public static class ServiceCollectionExtensions
+{
+    extension(IServiceCollection services)
+    {
+        public IServiceCollection AddWhenNotRegisterd<T>(Action<IServiceCollection> register)
+        {
+            if (services.Any(x => x.ServiceType == typeof(T)))
+            {
+                return services;
+            }
+
+            register(services);
+            return services;
+        }
+    }
 }

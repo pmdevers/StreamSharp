@@ -55,6 +55,12 @@ namespace StreamSharp.PostgreSQL.Migrations
                 {
                     table.PrimaryKey("PK_LibraryItems", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventDocument_AggregateId_AggregateName_Version",
+                table: "EventDocument",
+                columns: new[] { "AggregateId", "AggregateName", "Version" },
+                unique: true);
         }
 
         /// <inheritdoc />

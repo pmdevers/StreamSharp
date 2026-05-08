@@ -5,6 +5,7 @@
     <File Path="docs/toc.yml" />
   </Folder>
   <Folder Name="/plugins/">
+    <File Path="plugins/Directory.Build.targets" />
     <Project Path="plugins/StreamSharp.DummyPlugin/StreamSharp.DummyPlugin.csproj" />
     <Project Path="plugins/StreamSharp.PostgreSQL/StreamSharp.PostgreSQL.csproj" />
     <Project Path="plugins/StreamSharp.UI/StreamSharp.UI.csproj" />
@@ -13,6 +14,7 @@
     <File Path=".dockerignore" />
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
+    <File Path="AGENTS.md" />
     <File Path="CODE_OF_CONDUCT.md" />
     <File Path="Directory.Packages.props" />
     <File Path="docfx.json" />

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StreamSharp.Core.Abstractions;
 using StreamSharp.Core.Entities;
 using StreamSharp.Core.Queries;
 
@@ -18,7 +17,7 @@ internal class LibraryQueries(StreamSharpDB context) : ILibraryQueries
             .ToArrayAsync(cancellationToken);
     }
 
-    public Task<ILibraryQueries.LibraryDto?> GetLibraryByIdAsync(AggregateId libraryId, CancellationToken cancellationToken)
+    public Task<ILibraryQueries.LibraryDto?> GetLibraryByIdAsync(LibraryId libraryId, CancellationToken cancellationToken)
     {
         return context.Libraries
             .Where(x => x.Id == libraryId)
@@ -26,7 +25,7 @@ internal class LibraryQueries(StreamSharpDB context) : ILibraryQueries
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public Task<ILibraryQueries.LibraryItemDto[]> GetLibraryItemsAsync(AggregateId libraryId, int page, int pageSize, string? search = null, string? sortBy = null, CancellationToken cancellationToken = default)
+    public Task<ILibraryQueries.LibraryItemDto[]> GetLibraryItemsAsync(LibraryId libraryId, int page, int pageSize, string? search = null, string? sortBy = null, CancellationToken cancellationToken = default)
     {
         return context.LibraryItems
             .Where(x => x.LibraryId == libraryId)
