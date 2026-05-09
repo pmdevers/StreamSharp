@@ -36,9 +36,9 @@
       },
       "Scalar.AspNetCore": {
         "type": "Direct",
-        "requested": "[2.12.50, )",
-        "resolved": "2.12.50",
-        "contentHash": "VjP0hDqICp70OuDtasziehQfs3t2TuhlXfWoOgc5H06iiYLAajclEjfrNDqqD2CTxBPMoU243BXmEphCRF/QTQ=="
+        "requested": "[2.14.9, )",
+        "resolved": "2.14.9",
+        "contentHash": "bDc8NjI2JSIAX0C1+02WO11zCJ1SJQhWdMC0s7yi2Nh2atoNRpNRPiYeyIhWSerkc1SkDdJVOeU9QSY6jb0/zQ=="
       },
       "SonarAnalyzer.CSharp": {
         "type": "Direct",
@@ -208,12 +208,6 @@
       "streamsharp.core": {
         "type": "Project"
       },
-      "streamsharp.ui": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.Extensions.FileProviders.Embedded": "[10.0.5, )"
-        }
-      },
       "Microsoft.Build.Framework": {
         "type": "CentralTransitive",
         "requested": "[18.3.3, )",
@@ -235,12 +229,6 @@
           "Microsoft.CodeAnalysis.Analyzers": "3.11.0",
           "Microsoft.CodeAnalysis.Common": "[5.0.0]"
         }
-      },
-      "Microsoft.Extensions.FileProviders.Embedded": {
-        "type": "CentralTransitive",
-        "requested": "[10.0.5, )",
-        "resolved": "10.0.5",
-        "contentHash": "DQzkbLFNfwmjxErAnWyZTTyBd4cMo6vmGteM4Ayedhk5Pccm2VuKoeKcOZjJG1T+dYK6lMCNk2L7Ftl7dLhgqg=="
       }
     }
   }
